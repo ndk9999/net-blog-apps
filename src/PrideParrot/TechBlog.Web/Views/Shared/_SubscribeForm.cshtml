@@ -1,0 +1,29 @@
+﻿@model SubscribeViewModel
+
+	<h1 id="colorlib-logo" class="mb-4">
+		<a href="/" style="background-image: url(/images/bg_1.jpg);">
+			Tech <span>Blog</span>
+		</a>
+	</h1>
+
+	<div class="mb-4">
+		<h3>Subscribe for newsletter</h3>
+
+		<form asp-action="Subscribe"
+		      asp-controller="Home"
+		      method="post"
+		      class="colorlib-subscribe-form">
+
+			<div class="form-group d-flex">
+				<div class="icon">
+					<span class="icon-paper-plane"></span>
+				</div>
+
+				<input type="text"
+				       class="form-control"
+				       asp-for="Email"
+				       placeholder="Enter Email Address">
+			</div>
+
+		</form>
+	</div>

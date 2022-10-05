@@ -1,0 +1,57 @@
+﻿@model PostListViewModel
+
+@{
+	var currentPage = Context.Request.Query.TryGetValue("p", out var pageNumber) ? Convert.ToInt32(pageNumber) : 1;
+	var totalPages = Math.Ceiling(Model.TotalPosts / 10.0);
+}
+
+@if (currentPage > 1 || currentPage < totalPages)
+{
+	var prev = $"?p={currentPage - 1}";
+	var next = $"?p={currentPage + 1}";
+
+	if (ViewContext.RouteData.Values["action"].ToString().Equals("search", StringComparison.OrdinalIgnoreCase))
+	{
+		var keyword = Context.Request.Query["s"].ToString();
+
+		prev = $"?s={keyword}&p={currentPage - 1}";
+		next = $"?s={keyword}&p={currentPage + 1}";
+	}
+
+	<div class="row">
+		<div class="col">
+			<div class="block-27 text-center">
+				<ul>
+					<li class="@(currentPage > 1 ? "" : "inactive")">
+						@if (currentPage > 1)
+						{
+							<a href="@prev" title="Previous page">
+								&lt;
+							</a>
+						}
+						else
+						{
+							<span title="Previous page">
+								&lt;
+							</span>
+						}
+					</li>
+					<li class="@(currentPage < totalPages ? "" : "inactive")">
+						@if (currentPage < totalPages)
+						{
+							<a href="@next" title="Next page">
+								&gt;
+							</a>
+						}
+						else
+						{
+							<span title="Next page">
+								&gt;
+							</span>
+						}
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+}

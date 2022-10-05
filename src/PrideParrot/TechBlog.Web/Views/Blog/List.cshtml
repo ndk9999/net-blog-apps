@@ -1,0 +1,21 @@
+﻿@model PostListViewModel
+
+@if (Model.Posts.Count > 0)
+{
+	<div class="row pt-md-4">
+		@foreach (var post in Model.Posts)
+		{
+			<div class="col-md-12">
+				<partial name="_PostItem" model="post" />
+			</div>
+		}
+	</div>
+
+	<partial name="_Pager" model="Model"/>
+}
+else
+{
+	<p class="font-weight-bold text-danger">
+		No posts found!
+	</p>
+}

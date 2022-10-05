@@ -17,4 +17,26 @@
 		<ProjectReference Include="..\TechBlog.Core\TechBlog.Core.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="Views\Shared\_NavBar.cshtml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <_ContentIncludedByDefault Remove="Views\Blog\_PostItem.cshtml" />
+	  <_ContentIncludedByDefault Remove="Views\Shared\_NavBar.cshtml" />
+	  <_ContentIncludedByDefault Remove="Views\Shared\_Pager.cshtml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="Views\Blog\_PostItem.cshtml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="Views\Shared\_Pager.cshtml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Extensions\" />
+	</ItemGroup>
+
 </Project>
