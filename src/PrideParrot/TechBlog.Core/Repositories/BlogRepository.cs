@@ -28,6 +28,21 @@ public class BlogRepository : IBlogRepository
 		return await FilterPosts(condition).CountAsync(cancellationToken: cancellationToken);
 	}
 
+	public async Task<IList<MonthlyPostCountItem>> CountMonthlyPostsAsync(int numMonths, CancellationToken cancellationToken = default)
+	{
+		return await _context.Set<Post>()
+			.GroupBy(x => new { x.PostedDate.Year, x.PostedDate.Month })
+			.Select(g => new MonthlyPostCountItem()
+			{
+				Year = g.Key.Year,
+				Month = g.Key.Month,
+				PostCount = g.Count(x => x.Published)
+			})
+			.OrderByDescending(x => x.Year)
+			.ThenByDescending(x => x.Month)
+			.ToListAsync(cancellationToken);
+	}
+
 	public async Task<Category> GetCategoryAsync(string slug, CancellationToken cancellationToken = default)
 	{
 		return await _context.Set<Category>()
@@ -40,6 +55,7 @@ public class BlogRepository : IBlogRepository
 			.OrderBy(x => x.Name)
 			.Select(x => new CategoryItem()
 			{
+				Id = x.Id,
 				Name = x.Name,
 				UrlSlug = x.UrlSlug,
 				Description = x.Description,
@@ -54,6 +70,21 @@ public class BlogRepository : IBlogRepository
 			.FirstOrDefaultAsync(x => x.UrlSlug == slug, cancellationToken);
 	}
 
+	public async Task<IList<TagItem>> GetTagsAsync(CancellationToken cancellationToken = default)
+	{
+		return await _context.Set<Tag>()
+			.OrderBy(x => x.Name)
+			.Select(x => new TagItem()
+			{
+				Id = x.Id,
+				Name = x.Name,
+				UrlSlug = x.UrlSlug,
+				Description = x.Description,
+				PostCount = x.Posts.Count(p => p.Published)
+			})
+			.ToListAsync(cancellationToken);
+	}
+
 	public async Task<Post> GetPostAsync(int year, int month, string slug, CancellationToken cancellationToken = default)
 	{
 		var postQuery = new PostQuery()
@@ -65,6 +96,14 @@ public class BlogRepository : IBlogRepository
 		};
 
 		return await FilterPosts(postQuery).FirstOrDefaultAsync(cancellationToken);
+	}
+
+	public async Task<IList<Post>> GetPopularArticlesAsync(int numPosts, CancellationToken cancellationToken = default)
+	{
+		return await _context.Set<Post>()
+			.OrderBy(x => Guid.NewGuid())
+			.Take(numPosts)
+			.ToListAsync(cancellationToken);
 	}
 
 	private IQueryable<Post> FilterPosts(PostQuery condition)

@@ -1,0 +1,31 @@
+﻿@model SubscribeViewModel
+
+<div class="sidebar-box subs-wrap img py-4" 
+     style="background-image: url(/images/bg_1.jpg);">
+	<div class="overlay"></div>
+
+	<h3 class="mb-4 sidebar-heading">
+		Newsletter
+	</h3>
+	
+	<p class="mb-4">
+		Far far away, behind the word mountains, far from the countries Vokalia
+	</p>
+	
+	<form asp-controller="Home" 
+	      asp-action="Subscribe" 
+		  method="post"
+	      class="subscribe-form">
+		<div class="form-group">
+			<input type="text" 
+			       id="email-address"
+				   name="email"
+			       class="form-control" 
+			       placeholder="Email Address">
+
+			<button type="submit" class="mt-2 btn btn-white submit">
+				Subscribe
+			</button>
+		</div>
+	</form>
+</div>

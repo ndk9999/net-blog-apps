@@ -1,0 +1,20 @@
+﻿@model IList<TagItem>
+
+<div class="sidebar-box ftco-animate fadeInUp ftco-animated">
+	<h3 class="sidebar-heading">
+		Tag Cloud
+	</h3>
+
+	<div class="tagcloud">
+		@foreach (var item in Model)
+		{
+			<a asp-controller="Blog"
+			   asp-action="Tag"
+			   asp-route-slug="@item.UrlSlug"
+			   class="tag-cloud-link"
+			   title="@item.Description">
+				@item.Name (@item.PostCount)
+			</a>
+		}
+	</div>
+</div>

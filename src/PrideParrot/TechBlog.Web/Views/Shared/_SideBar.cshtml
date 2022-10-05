@@ -1,3 +1,11 @@
 ﻿<partial name="_SearchForm" />
 
 @await Component.InvokeAsync("CategoriesWidget")
+@await Component.InvokeAsync("PopularArticles")
+@await Component.InvokeAsync("TagCloudWidget")
+
+<partial name="_NewsletterForm" model="new SubscribeViewModel()"/>
+
+@await Component.InvokeAsync("ArchivesWidget")
+
+<partial name="_SocialMedia"/>

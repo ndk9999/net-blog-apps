@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Globalization;
 using TechBlog.Core.Constants;
 using TechBlog.Core.DTO;
 using TechBlog.Core.Repositories;
@@ -68,7 +69,7 @@ public class BlogController : Controller
 		return View("List", model);
 	}
 
-	// GET /tag/slug?p=10
+	// GET /search?s=keyword
 	public async Task<IActionResult> Search(string s, int p = 1)
 	{
 		if (string.IsNullOrWhiteSpace(s))
@@ -84,8 +85,22 @@ public class BlogController : Controller
 		return View("List", model);
 	}
 
+	// GET /tag/slug?p=10
+	public async Task<IActionResult> Archive(int year, int month, int p = 1)
+	{
+		var postQuery = new PostQuery() { Year = year, Month = month };
+		var model = await PostListViewModel.CreateAsync(Default.PostQueryPurpose.SearchByKeyword, _blogRepository, postQuery, p);
+		var monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month);
+
+		model.Keyword = $"{monthName} {year}";
+
+		ViewBag.PageTitle = $"List of posts in {monthName} {year}";
+
+		return View("List", model);
+	}
+
 	// GET /post/year/month/slug
-	public async Task<IActionResult> Post(int year, int month, string slug)
+	public async Task<IActionResult> Post(int year, int month, int day, string slug)
 	{
 		var post = await _blogRepository.GetPostAsync(year, month, slug);
 

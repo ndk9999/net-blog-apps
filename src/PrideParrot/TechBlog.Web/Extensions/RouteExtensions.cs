@@ -15,6 +15,11 @@ public static class RouteExtensions
 			defaults: new { controller = "Home", action = "About" });
 
 		endpoints.MapControllerRoute(
+			name: "subscribe",
+			pattern: "subscribe",
+			defaults: new { controller = "Home", action = "Subscribe" });
+
+		endpoints.MapControllerRoute(
 			name: "posts-by-category",
 			pattern: "category/{slug}",
 			defaults: new { controller = "Blog", action = "Category" });
@@ -25,8 +30,13 @@ public static class RouteExtensions
 			defaults: new { controller = "Blog", action = "Tag" });
 
 		endpoints.MapControllerRoute(
+			name: "archives",
+			pattern: "archive/{year}/{month}",
+			defaults: new { controller = "Blog", action = "Archive" });
+
+		endpoints.MapControllerRoute(
 			name: "single-post",
-			pattern: "archive/{year}/{month}/{slug}",
+			pattern: "post/{year}/{month}/{day}/{slug}",
 			defaults: new { controller = "Blog", action = "Post" });
 
 		endpoints.MapControllerRoute(

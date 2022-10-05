@@ -23,6 +23,12 @@ namespace TechBlog.Web.Controllers
 			return View();
 		}
 
+		[HttpPost]
+		public IActionResult Subscribe(SubscribeViewModel model)
+		{
+			return View();
+		}
+
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 		public IActionResult Error()
 		{

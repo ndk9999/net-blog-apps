@@ -8617,6 +8617,9 @@ h1, h2, h3, h4, h5,
         color: #bfbfbf; }
         .blog-entry .text .meta-wrap .meta span a {
           color: #000000; }
+		.blog-entry .text .meta-wrap .meta span a:hover {
+			color: #007bff;
+		}
 
 .blog-entry-2 {
   margin-bottom: 6em; }
@@ -8840,6 +8843,9 @@ textarea.form-control {
         color: #000000; }
       .ftco-social li a:hover {
         color: #fff; }
+    .ftco-social li:hover a span {
+	    color: #007bff;
+    }
 
 #map {
   width: 100%; }

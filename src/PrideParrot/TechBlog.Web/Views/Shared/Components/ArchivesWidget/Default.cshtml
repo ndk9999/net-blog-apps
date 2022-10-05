@@ -1,0 +1,22 @@
+﻿@model IList<MonthlyPostCountItem>
+
+<div class="sidebar-box ftco-animate fadeInUp ftco-animated">
+	<h3 class="sidebar-heading">
+		Archives
+	</h3>
+
+	<ul class="categories">
+		@foreach (var item in Model)
+		{
+			<li>
+				<a asp-controller="Blog"
+				   asp-action="Archive"
+				   asp-route-year="@item.Year"
+				   asp-route-month="@item.Month">
+					@item.MonthName @item.Year 
+					<span>(@item.PostCount)</span>
+				</a>
+			</li>
+		}
+	</ul>
+</div>

@@ -5,10 +5,11 @@
 	   asp-action="Post"
 	   asp-route-year="@Model.PostedDate.Year"
 	   asp-route-month="@Model.PostedDate.Month"
+	   asp-route-day="@Model.PostedDate.Day"
 	   asp-route-slug="@Model.UrlSlug"
 	   title="@Model.Title"
 	   class="img img-2" 
-	   style="background-image: url(/images/image_1.jpg);"></a>
+	   style="background-image: url(/images/image_@(Model.Id % 10 + 1).jpg);"></a>
 
 	<div class="text text-2 pl-md-4">
 		<h3 class="mb-2">
@@ -16,6 +17,7 @@
 			   asp-action="Post"
 			   asp-route-year="@Model.PostedDate.Year"
 			   asp-route-month="@Model.PostedDate.Month"
+			   asp-route-day="@Model.PostedDate.Day"
 			   asp-route-slug="@Model.UrlSlug"
 			   title="@Model.Title">
 				@Model.Title
@@ -57,7 +59,8 @@
 			   asp-route-slug="@Model.UrlSlug"
 			   title="Read details"
 			   class="btn-custom">
-				Read More <span class="ion-ios-arrow-forward"></span>
+				Read More 
+				<span class="ion-ios-arrow-forward"></span>
 			</a>
 		</p>
 	</div>

@@ -1,6 +1,6 @@
 ﻿namespace TechBlog.Core.DTO;
 
-public class CategoryItem
+public class TagItem
 {
 	public int Id { get; set; }
 
