@@ -34,6 +34,20 @@ public class BlogRepository : IBlogRepository
 			.FirstOrDefaultAsync(x => x.UrlSlug == slug, cancellationToken);
 	}
 
+	public async Task<IList<CategoryItem>> GetCategoriesAsync(CancellationToken cancellationToken = default)
+	{
+		return await _context.Set<Category>()
+			.OrderBy(x => x.Name)
+			.Select(x => new CategoryItem()
+			{
+				Name = x.Name,
+				UrlSlug = x.UrlSlug,
+				Description = x.Description,
+				PostCount = x.Posts.Count(p => p.Published)
+			})
+			.ToListAsync(cancellationToken);
+	}
+
 	public async Task<Tag> GetTagAsync(string slug, CancellationToken cancellationToken = default)
 	{
 		return await _context.Set<Tag>()

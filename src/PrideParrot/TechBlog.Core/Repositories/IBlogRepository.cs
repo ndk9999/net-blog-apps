@@ -10,7 +10,9 @@ public interface IBlogRepository
 	Task<int> CountPostsAsync(PostQuery condition, CancellationToken cancellationToken = default);
 	
 	Task<Category> GetCategoryAsync(string slug, CancellationToken cancellationToken = default);
-	
+
+	Task<IList<CategoryItem>> GetCategoriesAsync(CancellationToken cancellationToken = default);
+
 	Task<Tag> GetTagAsync(string slug, CancellationToken cancellationToken = default);
 
 	Task<Post> GetPostAsync(int year, int month, string slug, CancellationToken cancellationToken = default);
