@@ -21,19 +21,23 @@
 
 			<div class="text">
 				<h3 class="heading">
-					<a href="#">
+					<a asp-controller="Blog"
+					   asp-action="Post"
+					   asp-route-year="@post.PostedDate.Year"
+					   asp-route-month="@post.PostedDate.Month"
+					   asp-route-day="@post.PostedDate.Day"
+					   asp-route-slug="@post.UrlSlug"
+					   title="@post.Title">
 						@post.Title
 					</a>
 				</h3>
 				<div class="meta">
 					<div>
 						<a asp-controller="Blog"
-						   asp-action="Post"
+						   asp-action="Archive"
 						   asp-route-year="@post.PostedDate.Year"
 						   asp-route-month="@post.PostedDate.Month"
-						   asp-route-day="@post.PostedDate.Day"
-						   asp-route-slug="@post.UrlSlug"
-						   title="@post.Title">
+						   title="View other posts in @post.PostedDate.ToString("MMMM yyyy")">
 							<span class="icon-calendar"></span> 
 							@post.PostedDate.ToString("MMMM dd, yyyyy HH:mm")
 						</a>
