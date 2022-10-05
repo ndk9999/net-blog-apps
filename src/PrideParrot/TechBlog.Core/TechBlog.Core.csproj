@@ -10,6 +10,7 @@
     <Folder Include="Entities\" />
     <Folder Include="Contexts\" />
     <Folder Include="Mappings\" />
+    <Folder Include="DTO\" />
     <Folder Include="Repositories\" />
   </ItemGroup>
 

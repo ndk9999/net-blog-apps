@@ -5,10 +5,10 @@
 	   asp-action="Post"
 	   asp-route-year="@Model.PostedDate.Year"
 	   asp-route-month="@Model.PostedDate.Month"
-	   asp-route-title="@Model.UrlSlug"
+	   asp-route-slug="@Model.UrlSlug"
 	   title="@Model.Title"
 	   class="img img-2" 
-	   style="background-image: url(images/image_1.jpg);"></a>
+	   style="background-image: url(/images/image_1.jpg);"></a>
 
 	<div class="text text-2 pl-md-4">
 		<h3 class="mb-2">
@@ -16,7 +16,7 @@
 			   asp-action="Post"
 			   asp-route-year="@Model.PostedDate.Year"
 			   asp-route-month="@Model.PostedDate.Month"
-			   asp-route-title="@Model.UrlSlug"
+			   asp-route-slug="@Model.UrlSlug"
 			   title="@Model.Title">
 				@Model.Title
 			</a>
@@ -31,7 +31,7 @@
 				<span>
 					<a asp-controller="Blog"
 					   asp-action="Category"
-					   asp-route-category="@Model.Category.UrlSlug"
+					   asp-route-slug="@Model.Category.UrlSlug"
 					   title="@Model.Category.Name">
 						<i class="icon-folder-o mr-2"></i> 
 						@Model.Category.Name
@@ -39,17 +39,7 @@
 				</span>
 				<span class="tagcloud d-inline-block">
 					<i class="icon-tags mr-2"></i>
-
-					@foreach (var item in Model.Tags)
-					{
-						<a asp-controller="Blog"
-						   asp-action="Tag"
-						   asp-route-tag="@item.UrlSlug"
-						   title="@item.Name"
-						   class="tag-cloud-link">
-							@item.Name
-						</a>
-					}
+					<partial name="_TagList" model="Model.Tags"/>
 				</span>
 			</p>
 		</div>
@@ -64,7 +54,7 @@
 			   asp-route-year="@Model.PostedDate.Year"
 			   asp-route-month="@Model.PostedDate.Month"
 			   asp-route-day="@Model.PostedDate.Day"
-			   asp-route-title="@Model.UrlSlug"
+			   asp-route-slug="@Model.UrlSlug"
 			   title="Read details"
 			   class="btn-custom">
 				Read More <span class="ion-ios-arrow-forward"></span>

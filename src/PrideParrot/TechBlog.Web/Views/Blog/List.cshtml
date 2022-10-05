@@ -1,5 +1,12 @@
 ﻿@model PostListViewModel
 
+@if (Model.Category != null || Model.Tag != null || !string.IsNullOrWhiteSpace(Model.Keyword))
+{
+	<h1>
+		@ViewData["PageTitle"]
+	</h1>
+}
+
 @if (Model.Posts.Count > 0)
 {
 	<div class="row pt-md-4">
