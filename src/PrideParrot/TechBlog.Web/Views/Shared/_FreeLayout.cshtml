@@ -47,23 +47,10 @@
 		</aside> <!-- END COLORLIB-ASIDE -->
 
 		<div id="colorlib-main">
-			<section class="ftco-section ftco-no-pt ftco-no-pb">
-				<div class="container-fluid">
-					<div class="row d-flex">
-						<div class="col-lg-8 px-md-5 py-5">
-							@RenderBody()
-						</div> <!-- END MAIN CONTENT -->
-
-						<div class="col-lg-4 sidebar ftco-animate bg-light pt-5 fadeInUp ftco-animated">
-							<partial name="_SideBar" />
-						</div> <!-- END SIDE BAR -->
-					</div>
-				</div>
-			</section>
+			@RenderBody()
 		</div> <!-- END MAIN SECTION -->
 
 	</div> <!-- END PAGE -->
-	
 	<!-- loader -->
 	<div id="ftco-loader" class="show fullscreen">
 		<svg class="circular" width="48px" height="48px">
@@ -72,10 +59,6 @@
 		</svg>
 	</div>
 
-
-	<script src="~/lib/jquery/dist/jquery.min.js"></script>
-	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-	<script src="~/js/site.js" asp-append-version="true"></script>
 
 	<script src="~/js/jquery.min.js" asp-append-version="true"></script>
 	<script src="~/js/jquery-migrate-3.0.1.min.js" asp-append-version="true"></script>
@@ -91,6 +74,9 @@
 	<script src="~/js/scrollax.min.js" asp-append-version="true"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
 	<script src="~/js/google-map.js" asp-append-version="true"></script>
+	
+	<partial name="_ValidationScriptsPartial" />
+
 	<script src="~/js/main.js" asp-append-version="true"></script>
 
 	@await RenderSectionAsync("scripts", required: false)

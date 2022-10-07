@@ -17,47 +17,4 @@
 		<ProjectReference Include="..\TechBlog.Core\TechBlog.Core.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <UpToDateCheckInput Remove="Views\Shared\_NavBar.cshtml" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <_ContentIncludedByDefault Remove="Views\Blog\Single.cshtml" />
-	  <_ContentIncludedByDefault Remove="Views\Blog\_PostItem.cshtml" />
-	  <_ContentIncludedByDefault Remove="Views\Shared\Components\CategoriesWidget\Default.cshtml" />
-	  <_ContentIncludedByDefault Remove="Views\Shared\_NavBar.cshtml" />
-	  <_ContentIncludedByDefault Remove="Views\Shared\_Pager.cshtml" />
-	  <_ContentIncludedByDefault Remove="Views\Shared\_SearchForm.cshtml" />
-	  <_ContentIncludedByDefault Remove="Views\Shared\_TagList.cshtml" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <UpToDateCheckInput Remove="Views\Blog\_PostItem.cshtml" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <UpToDateCheckInput Remove="Views\Shared\_Pager.cshtml" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Components\" />
-	  <Folder Include="Extensions\" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <UpToDateCheckInput Remove="Views\Shared\_SearchForm.cshtml" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <UpToDateCheckInput Remove="Views\Blog\Single.cshtml" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <UpToDateCheckInput Remove="Views\Shared\_TagList.cshtml" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <UpToDateCheckInput Remove="Views\Shared\Components\CategoriesWidget\Default.cshtml" />
-	</ItemGroup>
-
 </Project>

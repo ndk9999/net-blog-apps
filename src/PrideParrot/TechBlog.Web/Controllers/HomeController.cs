@@ -18,13 +18,25 @@ namespace TechBlog.Web.Controllers
 			return View();
 		}
 
+		[HttpGet]
 		public IActionResult Contact()
 		{
 			return View();
 		}
 
 		[HttpPost]
-		public IActionResult Subscribe(SubscribeViewModel model)
+		public IActionResult Contact(ContactFormModel model)
+		{
+			if (!ModelState.IsValid)
+			{
+				return View(model);
+			}
+
+			return RedirectToAction("Contact");
+		}
+
+		[HttpPost]
+		public IActionResult Subscribe(SubscribeFormModel model)
 		{
 			return View();
 		}
