@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Identity;
 using TechBlog.Core.Contexts;
 using TechBlog.Core.Entities;
 
@@ -6,21 +6,87 @@ namespace TechBlog.Core.Repositories;
 
 public class DataSeeder : IDataSeeder
 {
-	public void Initialize(BlogDbContext dbContext)
-	{
-		dbContext.Database.EnsureCreated();
+	private readonly IPasswordHasher<Account> _passwordHasher;
+	private readonly BlogDbContext _dbContext;
 
-		if (dbContext.Set<Post>().Any())
+	public DataSeeder(
+		IPasswordHasher<Account> passwordHasher, 
+		BlogDbContext dbContext)
+	{
+		_passwordHasher = passwordHasher;
+		_dbContext = dbContext;
+	}
+
+	public void Initialize()
+	{
+		_dbContext.Database.EnsureCreated();
+
+		var admin = AddRolesAndAccount();
+
+		if (_dbContext.Set<Post>().Any())
 		{
 			return;
 		}
 
-		var tags = AddTags(dbContext);
-		var categories = AddCategories(dbContext);
-		var posts = AddPosts(dbContext, categories, tags);
+		var tags = AddTags();
+		var categories = AddCategories();
+		var posts = AddPosts(admin, categories, tags);
 	}
 
-	private IList<Tag> AddTags(BlogDbContext dbContext)
+	private Account AddRolesAndAccount()
+	{
+		var roleNames = new[] { "Administrator", "Editor" };
+		var roles = new List<Role>();
+
+		foreach (var name in roleNames)
+		{
+			var role = _dbContext.Set<Role>().FirstOrDefault(x => x.Name == name);
+
+			if (role is null)
+			{
+				role = new Role()
+				{
+					Name = name,
+					NormalizedName = name.ToUpper(),
+					ConcurrencyStamp = Guid.NewGuid().ToString("D")
+				};
+				_dbContext.Set<Role>().Add(role);
+			}
+
+			roles.Add(role);
+		}
+
+		var admin = new Account()
+		{
+			FullName = "Phuc Nguyen",
+			UserName = "phucnv",
+			NormalizedUserName = "PHUCNV",
+			Email = "phuc.nguyen@devsoft.vn",
+			NormalizedEmail = "PHUC.NGUYEN@DEVSOFT.VN",
+			PhoneNumber = "0987654321",
+			EmailConfirmed = true,
+			PhoneNumberConfirmed = true,
+			SecurityStamp = Guid.NewGuid().ToString("D")
+		};
+
+		if (!_dbContext.Set<Account>().Any(x => x.UserName == admin.UserName))
+		{
+			admin.PasswordHash = _passwordHasher.HashPassword(admin, "123456");
+
+			_dbContext.Set<Account>().Add(admin);
+			_dbContext.Set<UserInRole>().AddRange(roles.Select(x => new UserInRole()
+			{
+				Account = admin,
+				Role = x
+			}));
+		}
+
+		_dbContext.SaveChanges();
+
+		return admin;
+	}
+
+	private IList<Tag> AddTags()
 	{
 		var tags = new List<Tag>()
 		{
@@ -36,13 +102,13 @@ public class DataSeeder : IDataSeeder
 			new() {Name = "Data Structures", Description = "Data Structures", UrlSlug = "data-structures"}
 		};
 
-		dbContext.AddRange(tags);
-		dbContext.SaveChanges();
+		_dbContext.AddRange(tags);
+		_dbContext.SaveChanges();
 
 		return tags;
 	}
 
-	private IList<Category> AddCategories(BlogDbContext dbContext)
+	private IList<Category> AddCategories()
 	{
 		var categories = new List<Category>()
 		{
@@ -58,13 +124,13 @@ public class DataSeeder : IDataSeeder
 			new() {Name = "Front-end Frameworks", Description = "Front-end Frameworks", UrlSlug = "front-end-frameworks"}
 		};
 
-		dbContext.AddRange(categories);
-		dbContext.SaveChanges();
+		_dbContext.AddRange(categories);
+		_dbContext.SaveChanges();
 
 		return categories;
 	}
 
-	private IList<Post> AddPosts(BlogDbContext dbContext, IList<Category> categories, IList<Tag> tags)
+	private IList<Post> AddPosts(Account admin, IList<Category> categories, IList<Tag> tags)
 	{
 		var posts = new List<Post>()
 		{
@@ -310,8 +376,8 @@ public class DataSeeder : IDataSeeder
 			},
 		};
 
-		dbContext.AddRange(posts);
-		dbContext.SaveChanges();
+		_dbContext.AddRange(posts);
+		_dbContext.SaveChanges();
 
 		return posts;
 	}

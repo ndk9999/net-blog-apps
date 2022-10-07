@@ -24,6 +24,6 @@ public class Post
 
 
 	public Category Category { get; set; }
-
+	
 	public IList<Tag> Tags { get; set; }
 }

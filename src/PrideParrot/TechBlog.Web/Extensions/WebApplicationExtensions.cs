@@ -1,5 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using TechBlog.Core.Contexts;
+using TechBlog.Core.Entities;
+using TechBlog.Core.IdentityStores;
 using TechBlog.Core.Repositories;
 
 namespace TechBlog.Web.Extensions;
@@ -9,6 +12,8 @@ public static class WebApplicationExtensions
 	public static WebApplicationBuilder ConfigureMvc(this WebApplicationBuilder builder)
 	{
 		builder.Services.AddControllersWithViews();
+		builder.Services.AddResponseCompression();
+		builder.Services.AddMemoryCache();
 
 		return builder;
 	}
@@ -24,7 +29,34 @@ public static class WebApplicationExtensions
 		return builder;
 	}
 
-	public static WebApplication ConfigureRequestPipeline(this WebApplication app)
+	public static WebApplicationBuilder ConfigureIdentity(this WebApplicationBuilder builder)
+	{
+		builder.Services.ConfigureApplicationCookie(options =>
+		{
+			options.AccessDeniedPath = new PathString("/access-denied");
+			options.LoginPath = new PathString("/login");
+			options.ExpireTimeSpan = TimeSpan.FromDays(1);
+			options.SlidingExpiration = true;
+		});
+
+		builder.Services
+			.AddIdentity<Account, Role>(options =>
+			{
+				options.SignIn.RequireConfirmedAccount = true;
+				options.Password.RequiredLength = 6;
+				options.Password.RequireDigit = true;
+				options.Password.RequireNonAlphanumeric = true;
+				options.Password.RequireUppercase = true;
+				options.Password.RequireLowercase = true;
+			})
+			.AddUserStore<AccountStore>()
+			.AddRoleStore<RoleStore>()
+			.AddDefaultTokenProviders();
+
+		return builder;
+	}
+
+	public static WebApplication UseRequestPipeline(this WebApplication app)
 	{
 		// Configure the HTTP request pipeline.
 		if (!app.Environment.IsDevelopment())
@@ -34,26 +66,26 @@ public static class WebApplicationExtensions
 			app.UseHsts();
 		}
 
+		app.UseResponseCompression();
 		app.UseHttpsRedirection();
 		app.UseStaticFiles();
 
 		app.UseRouting();
 
+		app.UseAuthentication();
 		app.UseAuthorization();
 
 		return app;
 	}
 
-	public static IApplicationBuilder ConfigureDataSeeder(this IApplicationBuilder app)
+	public static IApplicationBuilder UseDataSeeder(this IApplicationBuilder app)
 	{
 		using var scope = app.ApplicationServices.CreateScope();
 
 		try
 		{
-			var dbContext = scope.ServiceProvider.GetService<BlogDbContext>();
 			var dataSeeder = scope.ServiceProvider.GetService<IDataSeeder>();
-
-			dataSeeder.Initialize(dbContext);
+			dataSeeder.Initialize();
 		}
 		catch (Exception ex)
 		{

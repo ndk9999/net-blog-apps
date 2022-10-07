@@ -4,7 +4,13 @@
 <script>
 	var settings = {
 		validClass: "is-valid",
-		errorClass: "is-invalid"
+		errorClass: "is-invalid",
+		//highlight: function (element, errorClass, validClass) {
+		//	$(element).addClass(this.settings.errorElementClass).removeClass(errorClass);
+		//},
+		//unhighlight: function (element, errorClass, validClass) {
+		//	$(element).removeClass(this.settings.errorElementClass).removeClass(errorClass);
+		//},
 	};
 	$.validator.setDefaults(settings);
 	$.validator.unobtrusive.options = settings;

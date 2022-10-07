@@ -1,0 +1,90 @@
+﻿Add ASP.NET Identity into existing MVC project
+
+-----------------------------------------------------------------------
+Referrences:
+	1. https://programmingcsharp.com/implement-identity-on-existing-asp-project/
+	2. https://www.tektutorialshub.com/asp-net-core/asp-net-core-identity-tutorial/
+
+-----------------------------------------------------------------------
+Install the NuGet Packages
+	1. Microsoft.AspNetCore.Identity
+	2. Microsoft.AspNetCore.Identity.EntityFrameworkCore (TechBlog.Core)
+
+-----------------------------------------------------------------------
+Create custom entities & mapping classes
+	1. Accounts (IdentityUser)
+	2. UserClaim (IdentityUserClaim)
+	3. UserLogin (IdentityUserLogin)
+	4. UserToken (IdentityUserToken)
+	5. UserInRole (IdentityUserRole)
+	6. Role (IdentityRole)
+	7. RoleClaim (IdentityRoleClaim)
+
+-----------------------------------------------------------------------
+Create custom store classes
+	1. AccountStore
+	2. RoleStore
+
+-----------------------------------------------------------------------
+Add the migration & Update the database
+	1. Add-Migration AddIdentity
+	2. Update-Database
+
+Other commands:
+	3. Remove-Migration (Delete last migration file and changes)
+	4. Update-Database "Last-Migration-Name" (Rollback data in database)
+	
+-----------------------------------------------------------------------
+Update the DataSeeder class
+	1. Add method AddRolesAndAccount() to create admin account & roles
+	2. Update method Initialize()
+
+-----------------------------------------------------------------------
+Register the Identity service
+	1. Create extension method ConfigureIdentity()
+		public static WebApplicationBuilder ConfigureIdentity(this WebApplicationBuilder builder)
+		{
+			builder.Services.ConfigureApplicationCookie(options =>
+			{
+				options.AccessDeniedPath = new PathString("/access-denied");
+				options.LoginPath = new PathString("/login");
+				options.ExpireTimeSpan = TimeSpan.FromDays(1);
+				options.SlidingExpiration = true;
+			});
+
+			builder.Services
+				.AddIdentity<Account, Role>()
+				.AddUserStore<AccountStore>()
+				.AddRoleStore<RoleStore>()
+				.AddDefaultTokenProviders();
+
+			return builder;
+		}
+	
+	2. Call it from the main method
+		builder
+			.ConfigureMvc()
+			.ConfigureServices()
+			.ConfigureIdentity();
+
+-----------------------------------------------------------------------
+Configure the Authentification and Authorization middleware
+	1. Call these methods from the method UseRequestPipeline()
+		app.UseAuthentication();
+		app.UseAuthorization();
+
+-----------------------------------------------------------------------
+Create access denied screen
+	1. Create an action Denied in the AdminController class
+	2. Create a view Denied.cshtml in the Shared folder
+
+-----------------------------------------------------------------------
+Other steps 
+	1. Building the UI
+	2. Protecting the Page
+	3. Login & Register Menu
+	4. User Registration
+	5. Password Validation
+	6. Login Form
+	7. Displaying the Login User Name
+	8. Logout

@@ -2,8 +2,13 @@
 
 public static class RouteExtensions
 {
-	public static IEndpointRouteBuilder ConfigureBlogRoutes(this IEndpointRouteBuilder endpoints)
+	public static IEndpointRouteBuilder UseBlogRoutes(this IEndpointRouteBuilder endpoints)
 	{
+		endpoints.MapControllerRoute(
+			name: "sign-in",
+			pattern: "login",
+			defaults: new { controller = "Admin", action = "Login" });
+
 		endpoints.MapControllerRoute(
 			name: "contact-me",
 			pattern: "contact",

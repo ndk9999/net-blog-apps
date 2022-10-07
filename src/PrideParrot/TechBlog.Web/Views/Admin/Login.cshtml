@@ -1,0 +1,53 @@
+﻿@model LoginModel
+
+@{
+	ViewBag.PageTitle = "Login";
+	Layout = "_FreeLayout";
+}
+
+<section class="ftco-section contact-section px-md-4">
+	<div class="container">
+		<div class="col-md-12 mb-4">
+			<h2 class="h3">
+				Sign In To Access Admin Console
+			</h2>
+		</div>
+
+		<div class="row block-9">
+			<div class="col-lg-6 d-flex">
+				<form asp-controller="Admin"
+				      asp-action="Login"
+				      class="bg-light p-5 contact-form"
+				      method="post"
+				      novalidate>
+					<input type="hidden" name="ReturnUrl" value="@ViewBag.ReturnUrl"/>
+
+					<div asp-validation-summary="All" class="invalid-feedback"></div>
+
+					<div class="form-group">
+						<input type="text"
+						       class="form-control"
+						       placeholder="Your UserName"
+						       asp-for="UserName">
+						<span asp-validation-for="UserName" class="invalid-feedback"></span>
+					</div>
+
+					<div class="form-group">
+						<input type="password"
+						       class="form-control"
+						       placeholder="Your Password"
+						       asp-for="Password">
+						<span asp-validation-for="Password" class="invalid-feedback"></span>
+					</div>
+
+					<div class="form-group">
+						<button type="submit"
+						        class="btn btn-primary py-3 px-5">
+							Login
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</section>

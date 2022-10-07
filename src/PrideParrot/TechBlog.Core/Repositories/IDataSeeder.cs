@@ -4,5 +4,5 @@ namespace TechBlog.Core.Repositories;
 
 public interface IDataSeeder
 {
-	void Initialize(BlogDbContext dbContext);
+	void Initialize();
 }

@@ -5,14 +5,15 @@ var builder = WebApplication.CreateBuilder(args);
 	// Add services to the container.
 	builder
 		.ConfigureMvc()
-		.ConfigureServices();
+		.ConfigureServices()
+		.ConfigureIdentity();
 }
 
 var app = builder.Build();
 {
-	app.ConfigureRequestPipeline();
-	app.ConfigureBlogRoutes();
-	app.ConfigureDataSeeder();
+	app.UseRequestPipeline();
+	app.UseBlogRoutes();
+	app.UseDataSeeder();
 	
 	app.Run();
 }
