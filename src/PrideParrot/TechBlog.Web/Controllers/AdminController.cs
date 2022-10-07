@@ -1,7 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Mapster;
+using MapsterMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using TechBlog.Core.DTO;
 using TechBlog.Core.Entities;
+using TechBlog.Core.Repositories;
+using TechBlog.Web.Extensions;
 using TechBlog.Web.Models;
 using TechBlog.Web.Providers;
 
@@ -11,10 +16,16 @@ namespace TechBlog.Web.Controllers;
 public class AdminController : Controller
 {
 	private readonly IAuthProvider _authProvider;
+	private readonly IBlogRepository _blogRepository;
+	private readonly IMapper _mapper;
 
-	public AdminController(IAuthProvider authProvider)
+	public AdminController(
+		IAuthProvider authProvider, 
+		IBlogRepository blogRepository, IMapper mapper)
 	{
 		_authProvider = authProvider;
+		_blogRepository = blogRepository;
+		_mapper = mapper;
 	}
 
 	// GET
@@ -55,6 +66,21 @@ public class AdminController : Controller
 	public IActionResult Dashboard()
 	{
 		return View();
+	}
+
+	public IActionResult Posts()
+	{
+		return View();
+	}
+
+	[HttpPost]
+	public async Task<IActionResult> GridPosts(GridRequestModel model)
+	{
+		var postQuery = new PostQuery();
+		var postsList = await _blogRepository.GetPagedPostsAsync(
+			postQuery, model, posts => posts.ProjectToType<PostItem>());
+
+		return Json(postsList.ToGridResponse());
 	}
 
 	private IActionResult RedirectToUrl(string returnUrl)

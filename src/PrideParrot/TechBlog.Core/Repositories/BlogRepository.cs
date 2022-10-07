@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TechBlog.Core.Collections;
 using TechBlog.Core.Contexts;
+using TechBlog.Core.Contracts;
 using TechBlog.Core.DTO;
 using TechBlog.Core.Entities;
 
@@ -14,7 +16,11 @@ public class BlogRepository : IBlogRepository
 		_context = context;
 	}
 
-	public async Task<IList<Post>> GetPostsAsync(PostQuery condition, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+	public async Task<IList<Post>> GetPostsAsync(
+		PostQuery condition, 
+		int pageNumber, 
+		int pageSize, 
+		CancellationToken cancellationToken = default)
 	{
 		return await FilterPosts(condition)
 			.OrderByDescending(x => x.PostedDate)
@@ -23,12 +29,14 @@ public class BlogRepository : IBlogRepository
 			.ToListAsync(cancellationToken: cancellationToken);
 	}
 
-	public async Task<int> CountPostsAsync(PostQuery condition, CancellationToken cancellationToken = default)
+	public async Task<int> CountPostsAsync(
+		PostQuery condition, CancellationToken cancellationToken = default)
 	{
 		return await FilterPosts(condition).CountAsync(cancellationToken: cancellationToken);
 	}
 
-	public async Task<IList<MonthlyPostCountItem>> CountMonthlyPostsAsync(int numMonths, CancellationToken cancellationToken = default)
+	public async Task<IList<MonthlyPostCountItem>> CountMonthlyPostsAsync(
+		int numMonths, CancellationToken cancellationToken = default)
 	{
 		return await _context.Set<Post>()
 			.GroupBy(x => new { x.PostedDate.Year, x.PostedDate.Month })
@@ -43,13 +51,15 @@ public class BlogRepository : IBlogRepository
 			.ToListAsync(cancellationToken);
 	}
 
-	public async Task<Category> GetCategoryAsync(string slug, CancellationToken cancellationToken = default)
+	public async Task<Category> GetCategoryAsync(
+		string slug, CancellationToken cancellationToken = default)
 	{
 		return await _context.Set<Category>()
 			.FirstOrDefaultAsync(x => x.UrlSlug == slug, cancellationToken);
 	}
 
-	public async Task<IList<CategoryItem>> GetCategoriesAsync(CancellationToken cancellationToken = default)
+	public async Task<IList<CategoryItem>> GetCategoriesAsync(
+		CancellationToken cancellationToken = default)
 	{
 		return await _context.Set<Category>()
 			.OrderBy(x => x.Name)
@@ -64,13 +74,15 @@ public class BlogRepository : IBlogRepository
 			.ToListAsync(cancellationToken);
 	}
 
-	public async Task<Tag> GetTagAsync(string slug, CancellationToken cancellationToken = default)
+	public async Task<Tag> GetTagAsync(
+		string slug, CancellationToken cancellationToken = default)
 	{
 		return await _context.Set<Tag>()
 			.FirstOrDefaultAsync(x => x.UrlSlug == slug, cancellationToken);
 	}
 
-	public async Task<IList<TagItem>> GetTagsAsync(CancellationToken cancellationToken = default)
+	public async Task<IList<TagItem>> GetTagsAsync(
+		CancellationToken cancellationToken = default)
 	{
 		return await _context.Set<Tag>()
 			.OrderBy(x => x.Name)
@@ -85,7 +97,9 @@ public class BlogRepository : IBlogRepository
 			.ToListAsync(cancellationToken);
 	}
 
-	public async Task<Post> GetPostAsync(int year, int month, string slug, CancellationToken cancellationToken = default)
+	public async Task<Post> GetPostAsync(
+		int year, int month, string slug, 
+		CancellationToken cancellationToken = default)
 	{
 		var postQuery = new PostQuery()
 		{
@@ -98,12 +112,24 @@ public class BlogRepository : IBlogRepository
 		return await FilterPosts(postQuery).FirstOrDefaultAsync(cancellationToken);
 	}
 
-	public async Task<IList<Post>> GetPopularArticlesAsync(int numPosts, CancellationToken cancellationToken = default)
+	public async Task<IList<Post>> GetPopularArticlesAsync(
+		int numPosts, CancellationToken cancellationToken = default)
 	{
 		return await _context.Set<Post>()
 			.OrderBy(x => Guid.NewGuid())
 			.Take(numPosts)
 			.ToListAsync(cancellationToken);
+	}
+
+	public async Task<IPagedList<T>> GetPagedPostsAsync<T>(
+		PostQuery condition, 
+		IPagingParams pagingParams, 
+		Func<IQueryable<Post>, IQueryable<T>> mapper)
+	{
+		var posts = FilterPosts(condition);
+		var projectedPosts = mapper(posts);
+
+		return await PagedList<T>.CreateAsync(projectedPosts, pagingParams);
 	}
 
 	private IQueryable<Post> FilterPosts(PostQuery condition)

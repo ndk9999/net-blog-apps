@@ -6,7 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 	builder
 		.ConfigureMvc()
 		.ConfigureServices()
-		.ConfigureIdentity();
+		.ConfigureIdentity()
+		.ConfigureMapster();
 }
 
 var app = builder.Build();

@@ -1,0 +1,79 @@
+﻿@{
+	ViewBag.PageTitle = "Admin Console";
+	Layout = "_AdminLayout";
+}
+
+@section styles {
+	<style>
+		.ui-jqgrid tr.jqgrow td {
+			white-space: normal !important;
+		}
+	</style>
+}
+
+<div class="col-md-12 mb-4">
+	<h2 class="h3">
+		Manage Posts
+	</h2>
+</div>
+
+<div class="w-100"></div>
+
+<div class="row">
+	<div class="col-md-12">
+		<table id="grid" class="table table-striped table-hover">
+		</table>
+
+		<div id="pager">
+		</div>
+	</div>
+</div>
+
+@section scripts
+{
+	<script>
+		$(function () {
+			"use strict";
+
+			var formatTitle = function (cellvalue, options, rowObject) {
+				return `
+					<a href="/manage/editpost/${rowObject.id}" title="Click to view details and edit post">${cellvalue}</a>
+					<p>${rowObject.shortDescription}</p>
+				`;
+			};
+
+			$("#grid").jqGrid({
+				url: '@Url.Action("GridPosts", "Admin")',
+				datatype: "json",
+				mtype: 'POST',
+				colModel: [
+					{ name: "id", label: "ID", width: 10 },
+					{
+						name: "title", label: "Title", width: 120, formatter: formatTitle
+					},
+					{
+						name: "postedDate", label: "Posted Date", width: 25, align: "center", sorttype: "date",
+						formatter: "date", formatoptions: { newformat: "d-M-Y" }
+					},
+					{ name: "published", label: "Published", width: 20 },
+					{ name: "categoryName", label: "Category", width: 40 }
+				],
+				styleUI: "Bootstrap4",
+				height: '100%',
+				width: '100%',
+				autowidth: true,
+				responsive: true,
+				altRows: true,
+				viewrecords: true,
+				emptyrecords: 'No records to display',
+				pager: '#pager',
+				idPrefix: "gb1_",
+				rowNum: 10,
+				rowList: [5, 10, 20, 30],
+				sortname: "Id",
+				sortorder: "desc",
+				caption: "Latest Posts"
+			});
+		});
+	</script>
+}

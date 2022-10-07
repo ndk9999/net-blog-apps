@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Mapster;
+using MapsterMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TechBlog.Core.Contexts;
 using TechBlog.Core.Entities;
 using TechBlog.Core.IdentityStores;
 using TechBlog.Core.Repositories;
+using TechBlog.Web.Mapsters;
 using TechBlog.Web.Providers;
 
 namespace TechBlog.Web.Extensions;
@@ -56,6 +59,17 @@ public static class WebApplicationExtensions
 			.AddUserStore<AccountStore>()
 			.AddRoleStore<RoleStore>()
 			.AddDefaultTokenProviders();
+
+		return builder;
+	}
+
+	public static WebApplicationBuilder ConfigureMapster(this WebApplicationBuilder builder)
+	{
+		var config = TypeAdapterConfig.GlobalSettings;
+		config.Scan(typeof(MapsterConfiguration).Assembly);
+
+		builder.Services.AddSingleton(config);
+		builder.Services.AddScoped<IMapper, ServiceMapper>();
 
 		return builder;
 	}
