@@ -3,28 +3,27 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TechBlog.Core.Entities;
 using TechBlog.Web.Models;
+using TechBlog.Web.Providers;
 
 namespace TechBlog.Web.Controllers;
 
 [Authorize]
 public class AdminController : Controller
 {
-	private readonly SignInManager<Account> _signInManager;
+	private readonly IAuthProvider _authProvider;
 
-	public AdminController(SignInManager<Account> signInManager)
+	public AdminController(IAuthProvider authProvider)
 	{
-		_signInManager = signInManager;
+		_authProvider = authProvider;
 	}
 
 	// GET
 	[HttpGet, AllowAnonymous]
 	public IActionResult Login(string returnUrl)
 	{
-		if (User.Identity.IsAuthenticated)
+		if (_authProvider.IsLoggedIn)
 		{
-			return !string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl)
-				? Redirect(returnUrl)
-				: RedirectToAction("Manage");
+			return RedirectToUrl(returnUrl);
 		}
 
 		ViewBag.ReturnUrl = returnUrl;
@@ -35,30 +34,33 @@ public class AdminController : Controller
 	[HttpPost, AllowAnonymous, ValidateAntiForgeryToken]
 	public async Task<IActionResult> Login(LoginModel model, string returnUrl)
 	{
-		if (!ModelState.IsValid)
+		if (ModelState.IsValid && 
+		    await _authProvider.LoginAsync(model.UserName, model.Password, model.RememberMe))
 		{
-			return View(model);
-		}
-
-		var loginResult = await _signInManager.PasswordSignInAsync(
-			model.UserName, 
-			model.Password, 
-			model.RememberMe, 
-			true);
-
-		if (loginResult.Succeeded)
-		{
-			return !string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl)
-				? Redirect(returnUrl)
-				: RedirectToAction("Manage");
+			return RedirectToUrl(returnUrl);
 		}
 
 		ModelState.AddModelError("", "Username or password is invalid");
 		return View(model);
 	}
 
-	public IActionResult Manage()
+	[HttpPost]
+	public async Task<IActionResult> Logout()
+	{
+		await _authProvider.LogoutAsync();
+
+		return RedirectToAction("Login");
+	}
+
+	public IActionResult Dashboard()
 	{
 		return View();
+	}
+
+	private IActionResult RedirectToUrl(string returnUrl)
+	{
+		return !string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl)
+			? Redirect(returnUrl)
+			: RedirectToAction("Dashboard");
 	}
 }

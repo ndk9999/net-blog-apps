@@ -4,6 +4,7 @@ using TechBlog.Core.Contexts;
 using TechBlog.Core.Entities;
 using TechBlog.Core.IdentityStores;
 using TechBlog.Core.Repositories;
+using TechBlog.Web.Providers;
 
 namespace TechBlog.Web.Extensions;
 
@@ -23,8 +24,11 @@ public static class WebApplicationExtensions
 		builder.Services.AddDbContext<BlogDbContext>(options =>
 			options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+		builder.Services.AddHttpContextAccessor();
+
 		builder.Services.AddScoped<IDataSeeder, DataSeeder>();
 		builder.Services.AddScoped<IBlogRepository, BlogRepository>();
+		builder.Services.AddScoped<IAuthProvider, AuthProvider>();
 
 		return builder;
 	}

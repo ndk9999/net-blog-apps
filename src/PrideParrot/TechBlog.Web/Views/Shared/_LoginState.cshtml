@@ -1,0 +1,29 @@
+﻿@if (AuthService.IsLoggedIn)
+{
+	<li>
+		<form asp-controller="Admin"
+		      asp-action="Logout"
+		      method="post">
+			<div class="btn-group">
+				<button type="button" 
+				        class="btn btn-success"
+						title="Go to Dashboard"
+				        onclick="location.href='@Url.Action("Dashboard", "Admin")'">
+					Hello @AuthService.Username!
+				</button>
+				<button type="submit" class="btn btn-danger">
+					Logout
+				</button>
+			</div>
+			
+		</form>
+	</li>
+}
+else
+{
+	<li>
+		<a asp-controller="Admin" asp-action="Login">
+			Login
+		</a>
+	</li>
+}

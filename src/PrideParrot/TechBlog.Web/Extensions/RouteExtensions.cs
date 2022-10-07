@@ -10,6 +10,21 @@ public static class RouteExtensions
 			defaults: new { controller = "Admin", action = "Login" });
 
 		endpoints.MapControllerRoute(
+			name: "sign-out",
+			pattern: "logout",
+			defaults: new { controller = "Admin", action = "Logout" });
+
+		endpoints.MapControllerRoute(
+			name: "dashboard",
+			pattern: "dashboard",
+			defaults: new { controller = "Admin", action = "Dashboard" });
+
+		endpoints.MapControllerRoute(
+			name: "manage",
+			pattern: "manage/{action}/{id?}",
+			defaults: new { controller = "Admin", action = "Posts" });
+
+		endpoints.MapControllerRoute(
 			name: "contact-me",
 			pattern: "contact",
 			defaults: new { controller = "Home", action = "Contact" });

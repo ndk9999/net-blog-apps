@@ -24,6 +24,15 @@
 
 	<ItemGroup>
 	  <_ContentIncludedByDefault Remove="Views\Admin\Login.cshtml" />
+	  <_ContentIncludedByDefault Remove="Views\Shared\_LoginState.cshtml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Providers\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="Views\Shared\_LoginState.cshtml" />
 	</ItemGroup>
 
 </Project>
