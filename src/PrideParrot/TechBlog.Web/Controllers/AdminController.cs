@@ -3,6 +3,7 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using TechBlog.Core.DTO;
 using TechBlog.Core.Entities;
 using TechBlog.Core.Repositories;
@@ -68,17 +69,27 @@ public class AdminController : Controller
 		return View();
 	}
 
-	public IActionResult Posts()
+	public async Task<IActionResult> Posts(PostFilterModel model)
 	{
-		return View();
+		var categories = await _blogRepository.GetCategoriesAsync();
+
+		model.CategoryList = categories
+			.Select(x => new SelectListItem()
+			{
+				Text = $"{x.Name} ({x.PostCount})",
+				Value = x.Id.ToString()
+			})
+			.ToList();
+
+		return View(model);
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> GridPosts(GridRequestModel model)
+	public async Task<IActionResult> GridPosts(PostFilterModel filterModel, GridRequestModel gridModel)
 	{
-		var postQuery = new PostQuery();
+		var postQuery = _mapper.Map<PostQuery>(filterModel);
 		var postsList = await _blogRepository.GetPagedPostsAsync(
-			postQuery, model, posts => posts.ProjectToType<PostItem>());
+			postQuery, gridModel, posts => posts.ProjectToType<PostItem>());
 
 		return Json(postsList.ToGridResponse());
 	}

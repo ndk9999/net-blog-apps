@@ -143,6 +143,16 @@ public class BlogRepository : IBlogRepository
 			posts = posts.Where(x => x.Published);
 		}
 
+		if (condition.NotPublished)
+		{
+			posts = posts.Where(x => !x.Published);
+		}
+
+		if (condition.CategoryId > 0)
+		{
+			posts = posts.Where(x => x.CategoryId == condition.CategoryId);
+		}
+
 		if (!string.IsNullOrWhiteSpace(condition.CategorySlug))
 		{
 			posts = posts.Where(x => x.Category.UrlSlug == condition.CategorySlug);

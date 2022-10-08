@@ -1,0 +1,44 @@
+﻿@model PostFilterModel
+
+<form method="GET" class="bg-light" id="filterForm">
+	<div class="row mb-3">
+		<div class="col-md-2">
+			<label asp-for="Year"></label>
+			<input asp-for="Year" class="form-control" />
+		</div>
+
+		<div class="col-md-2">
+			<label asp-for="Month"></label>
+			<select asp-for="Month" asp-items="Model.MonthList" class="form-control">
+				<option value="">--- All ---</option>
+			</select>
+		</div>
+
+		<div class="col-md-2">
+			<label asp-for="CategoryId"></label>
+			<select asp-for="CategoryId" asp-items="Model.CategoryList" class="form-control">
+				<option value="">--- All ---</option>
+			</select>
+		</div>
+
+		<div class="col-md-2">
+			<label asp-for="Keyword"></label>
+			<input asp-for="Keyword" class="form-control" />
+		</div>
+
+		<div class="col-md-2">
+			<label>&nbsp;</label>
+			<div>
+				<input type="checkbox" asp-for="NotPublished" class="form-check-input" />
+				<label asp-for="NotPublished"></label>
+			</div>
+		</div>
+
+		<div class="col-md-2">
+			<label>&nbsp;</label>
+			<button type="submit" class="btn btn-lg btn-primary btn-block">
+				Filter
+			</button>
+		</div>
+	</div>
+</form>

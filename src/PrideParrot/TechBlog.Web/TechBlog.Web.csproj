@@ -25,6 +25,7 @@
 
 	<ItemGroup>
 	  <_ContentIncludedByDefault Remove="Views\Admin\Login.cshtml" />
+	  <_ContentIncludedByDefault Remove="Views\Admin\_PostFilterPanel.cshtml" />
 	  <_ContentIncludedByDefault Remove="Views\Shared\_LoginState.cshtml" />
 	</ItemGroup>
 
@@ -215,6 +216,10 @@
 
 	<ItemGroup>
 	  <TypeScriptCompile Include="wwwroot\lib\tinymce\tinymce.d.ts" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="Views\Admin\_PostFilterPanel.cshtml" />
 	</ItemGroup>
 
 </Project>

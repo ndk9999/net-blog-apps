@@ -4,6 +4,10 @@ public class PostQuery
 {
 	public bool PublishedOnly { get; set; }
 
+	public bool NotPublished { get; set; }
+
+	public int? CategoryId { get; set; }
+
 	public string CategorySlug { get; set; }
 
 	public string TagSlug { get; set; }

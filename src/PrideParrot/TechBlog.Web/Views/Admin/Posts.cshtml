@@ -1,4 +1,6 @@
-﻿@{
+﻿@model PostFilterModel
+
+@{
 	ViewBag.PageTitle = "Admin Console";
 	Layout = "_AdminLayout";
 }
@@ -17,7 +19,7 @@
 	</h2>
 </div>
 
-<div class="w-100"></div>
+<partial name="_PostFilterPanel" model="Model" />
 
 <div class="row">
 	<div class="col-md-12">
@@ -37,9 +39,21 @@
 
 			var formatTitle = function (cellvalue, options, rowObject) {
 				return `
-					<a href="/manage/editpost/${rowObject.id}" title="Click to view details and edit post">${cellvalue}</a>
+					<a href="/manage/editpost/${rowObject.id}" 
+						title="Click to view details and edit post">
+							${cellvalue}
+					</a>
 					<p>${rowObject.shortDescription}</p>
 				`;
+			};
+
+			var formatToggleableStatus = function (cellvalue, options, rowObject) {
+				var icon = cellvalue ? "check" : "times";
+				var state = cellvalue ? "success" : "danger";
+				var fieldName = options.colModel.datafield || options.colModel.name.toLowerCase();
+				return '<a class="toggle-status display-4 text-' + state + '" style="cursor: pointer; display: block;" title="Toggle ' +
+					options.colModel.label + ' status" data-url="' + options.colModel.actionurl + '" data-id="' +
+					rowObject.id + '" data-field="' + fieldName + '"><i class="icon-' + icon + '"></i></a>';
 			};
 
 			$("#grid").jqGrid({
@@ -55,7 +69,10 @@
 						name: "postedDate", label: "Posted Date", width: 25, align: "center", sorttype: "date",
 						formatter: "date", formatoptions: { newformat: "d-M-Y" }
 					},
-					{ name: "published", label: "Published", width: 20 },
+					{
+						name: "published", label: "Published", width: 20, align: 'center',
+						formatter: formatToggleableStatus, actionurl: '@Url.Action("TogglePostFlag", "Admin")'
+					},
 					{ name: "categoryName", label: "Category", width: 40 }
 				],
 				styleUI: "Bootstrap4",
@@ -72,7 +89,33 @@
 				rowList: [5, 10, 20, 30],
 				sortname: "Id",
 				sortorder: "desc",
-				caption: "Latest Posts"
+				caption: "Latest Posts",
+				beforeRequest: function () {
+					var postParams = $("#grid").jqGrid('getGridParam', 'postData');
+					var formData = $('#filterForm').serializeArray();
+					var getUnique = function (arr, comp) {
+						var unique = arr
+							.map(function (e) { return e[comp] })
+							// store the keys of the unique objects
+							.map(function (e, i, final) { return final.indexOf(e) === i && i })
+							// eliminate the dead keys & store unique objects
+							.filter(function (e) { return arr[e] })
+							.map(function (e) { return arr[e] });
+						return unique;
+					}
+					formData = getUnique(formData, 'name');
+					$.each(formData, function (i, field) {
+						postParams[field.name] = field.value;
+					});
+					$("#grid").jqGrid('setGridParam', { postData: postParams });
+					postParams = $("#grid").jqGrid('getGridParam', 'postData');
+				}
+			});
+
+			$('#filterForm').submit(function (e) {
+				e.preventDefault();
+				$("#grid").trigger("reloadGrid");
+				return false;
 			});
 		});
 	</script>
