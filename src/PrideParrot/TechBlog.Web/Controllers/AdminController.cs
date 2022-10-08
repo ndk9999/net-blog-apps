@@ -94,6 +94,89 @@ public class AdminController : Controller
 		return Json(postsList.ToGridResponse());
 	}
 
+	[HttpPost]
+	public async Task<IActionResult> TogglePostFlag(int id, string flagName)
+	{
+		if (flagName != "published")
+		{
+			return Json(AjaxResponse.Error("Invalid flag name"));
+		}
+
+		var flagStatus = await _blogRepository.TogglePublishedFlagAsync(id);
+
+		return Json(AjaxResponse.Ok(flagStatus));
+	}
+
+	public async Task<IActionResult> EditPost(int? id)
+	{
+		var post = id > 0
+			? await _blogRepository.GetPostByIdAsync(id.Value, true)
+			: null;
+
+		var model = post == null
+			? new PostEditModel()
+			: _mapper.Map<PostEditModel>(post);
+
+		await PopulatePostEditModel(model);
+
+		return View(model);
+	}
+
+	[HttpPost]
+	public async Task<IActionResult> EditPost(PostEditModel model, string nextAction = "Close")
+	{
+		if (!ModelState.IsValid)
+		{
+			await PopulatePostEditModel(model);
+			return View(model);
+		}
+
+		var post = await _blogRepository.GetPostByIdAsync(model.Id);
+
+		if (post == null)
+		{
+			post = _mapper.Map<Post>(model);
+
+			post.Id = 0;
+			post.PostedDate = DateTime.Now;
+		}
+		else
+		{
+			_mapper.Map(model, post);
+
+			post.Category = null;
+			post.ModifiedDate = DateTime.Now;
+		}
+
+		var tags = model.SelectedTags.Split(
+			new[] {'\r', '\n', '\t', ',', ';'}, 
+			StringSplitOptions.RemoveEmptyEntries);
+		
+		await _blogRepository.CreateOrUpdatePostAsync(post, tags);
+
+		return nextAction == "Continue"
+			? RedirectToAction("EditPost", new {model.Id})
+			: RedirectToAction("Posts");
+	}
+
+	private async Task PopulatePostEditModel(PostEditModel model)
+	{
+		var categories = await _blogRepository.GetCategoriesAsync();
+		var tags = await _blogRepository.GetTagsAsync();
+
+		model.CategoryList = categories.Select(x => new SelectListItem()
+		{
+			Value = x.Id.ToString(),
+			Text = x.Name,
+		}).ToList();
+
+		model.TagList = tags.Select(x => new SelectListItem()
+		{
+			Value = x.Id.ToString(),
+			Text = x.Name,
+		}).ToList();
+	}
+
 	private IActionResult RedirectToUrl(string returnUrl)
 	{
 		return !string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl)

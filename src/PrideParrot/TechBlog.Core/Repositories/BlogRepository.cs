@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore;
 using TechBlog.Core.Collections;
 using TechBlog.Core.Contexts;
 using TechBlog.Core.Contracts;
@@ -112,6 +113,34 @@ public class BlogRepository : IBlogRepository
 		return await FilterPosts(postQuery).FirstOrDefaultAsync(cancellationToken);
 	}
 
+	public async Task<Post> GetPostByIdAsync(
+		int postId, bool includeDetails = false, 
+		CancellationToken cancellationToken = default)
+	{
+		if (!includeDetails)
+		{
+			return await _context.Set<Post>().FindAsync(postId);
+		}
+
+		return await _context.Set<Post>()
+			.Include(x => x.Category)
+			.Include(x => x.Tags)
+			.FirstOrDefaultAsync(x => x.Id == postId, cancellationToken);
+	}
+
+	public async Task<bool> TogglePublishedFlagAsync(
+		int postId, CancellationToken cancellationToken = default)
+	{
+		var post = await _context.Set<Post>().FindAsync(postId);
+
+		if (post is null) return false;
+
+		post.Published = !post.Published;
+		await _context.SaveChangesAsync(cancellationToken);
+
+		return post.Published;
+	}
+
 	public async Task<IList<Post>> GetPopularArticlesAsync(
 		int numPosts, CancellationToken cancellationToken = default)
 	{
@@ -130,6 +159,56 @@ public class BlogRepository : IBlogRepository
 		var projectedPosts = mapper(posts);
 
 		return await PagedList<T>.CreateAsync(projectedPosts, pagingParams);
+	}
+
+	public async Task<Post> CreateOrUpdatePostAsync(
+		Post post, IEnumerable<string> tags, 
+		CancellationToken cancellationToken = default)
+	{
+		if (post.Id > 0)
+		{
+			await _context.Entry(post).Collection(x => x.Tags).LoadAsync(cancellationToken);
+		}
+		else
+		{
+			post.Tags = new List<Tag>();
+		}
+
+		foreach (var tagName in tags)
+		{
+			if (string.IsNullOrWhiteSpace(tagName)) continue;
+			if (post.Tags.Any(x => x.Name == tagName)) continue;
+
+			var tag = await _context.Set<Tag>()
+				.FirstOrDefaultAsync(x => x.Name == tagName, cancellationToken);
+
+			if (tag == null)
+			{
+				var slug = Regex.Replace(
+					tagName.ToLower().Trim(), "[^a-z0-9]", "-");
+
+				tag = new Tag()
+				{
+					Name = tagName,
+					Description = tagName,
+					UrlSlug = slug.Trim(' ', '-')
+				};
+
+			}
+		
+			post.Tags.Add(tag);
+		}
+
+		post.Tags = post.Tags.Where(t => tags.Contains(t.Name)).ToList();
+
+		if (post.Id > 0)
+			_context.Update(post);
+		else
+			_context.Add(post);
+
+		await _context.SaveChangesAsync(cancellationToken);
+
+		return post;
 	}
 
 	private IQueryable<Post> FilterPosts(PostQuery condition)

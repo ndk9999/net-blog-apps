@@ -13012,3 +13012,8 @@ textarea.form-control {
 		stroke-dashoffset: -136px;
 	}
 }
+
+/* Customize jQGrid */
+.ui-jqgrid tr.jqgrow td {
+	white-space: normal !important;
+}

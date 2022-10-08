@@ -40,6 +40,15 @@ public interface IBlogRepository
 		string slug, 
 		CancellationToken cancellationToken = default);
 
+	Task<Post> GetPostByIdAsync(
+		int postId,
+		bool includeDetails = false,
+		CancellationToken cancellationToken = default);
+
+	Task<bool> TogglePublishedFlagAsync(
+		int postId,
+		CancellationToken cancellationToken = default);
+
 	Task<IList<Post>> GetPopularArticlesAsync(
 		int numPosts, 
 		CancellationToken cancellationToken = default);
@@ -48,4 +57,9 @@ public interface IBlogRepository
 		PostQuery condition, 
 		IPagingParams pagingParams, 
 		Func<IQueryable<Post>, IQueryable<T>> mapper);
+
+	Task<Post> CreateOrUpdatePostAsync(
+		Post post,
+		IEnumerable<string> tags,
+		CancellationToken cancellationToken = default);
 }

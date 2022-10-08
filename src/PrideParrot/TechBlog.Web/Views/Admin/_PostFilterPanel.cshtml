@@ -1,44 +1,57 @@
 ﻿@model PostFilterModel
 
-<form method="GET" class="bg-light" id="filterForm">
-	<div class="row mb-3">
-		<div class="col-md-2">
+<form method="GET" class="bg-light mb-3 p-2" id="filterForm">
+	<div class="row">
+		<div class="col-md-3">
 			<label asp-for="Year"></label>
 			<input asp-for="Year" class="form-control" />
 		</div>
 
-		<div class="col-md-2">
+		<div class="col-md-3">
 			<label asp-for="Month"></label>
 			<select asp-for="Month" asp-items="Model.MonthList" class="form-control">
 				<option value="">--- All ---</option>
 			</select>
 		</div>
 
-		<div class="col-md-2">
+		<div class="col-md-3">
 			<label asp-for="CategoryId"></label>
 			<select asp-for="CategoryId" asp-items="Model.CategoryList" class="form-control">
 				<option value="">--- All ---</option>
 			</select>
 		</div>
 
-		<div class="col-md-2">
+		<div class="col-md-3">
 			<label asp-for="Keyword"></label>
 			<input asp-for="Keyword" class="form-control" />
 		</div>
-
-		<div class="col-md-2">
-			<label>&nbsp;</label>
-			<div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-6 mt-2">
+			<div class="form-check">
 				<input type="checkbox" asp-for="NotPublished" class="form-check-input" />
-				<label asp-for="NotPublished"></label>
+				<label asp-for="NotPublished" class="font-weight-bold"></label>
 			</div>
 		</div>
 
-		<div class="col-md-2">
-			<label>&nbsp;</label>
-			<button type="submit" class="btn btn-lg btn-primary btn-block">
-				Filter
+		<div class="col-md-6 mt-2 text-right">
+			<button type="submit" class="btn btn-primary">
+				<span class="icon-filter"></span>
+				Filter Posts
 			</button>
+
+			<button type="button" class="btn btn-warning" id="btnClearFilter">
+				<span class="icon-eraser"></span>
+				Clear Form
+			</button>
+
+			<a class="btn btn-success"
+			   asp-controller="Admin"
+			   asp-action="EditPost">
+				<span class="icon-plus"></span>
+				Add New Post
+			</a>
 		</div>
 	</div>
 </form>

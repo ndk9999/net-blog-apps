@@ -1,19 +1,11 @@
 ﻿@model PostFilterModel
 
 @{
-	ViewBag.PageTitle = "Admin Console";
+	ViewBag.PageTitle = "Manage Posts";
 	Layout = "_AdminLayout";
 }
 
-@section styles {
-	<style>
-		.ui-jqgrid tr.jqgrow td {
-			white-space: normal !important;
-		}
-	</style>
-}
-
-<div class="col-md-12 mb-4">
+<div class="mb-4">
 	<h2 class="h3">
 		Manage Posts
 	</h2>
@@ -39,7 +31,7 @@
 
 			var formatTitle = function (cellvalue, options, rowObject) {
 				return `
-					<a href="/manage/editpost/${rowObject.id}" 
+					<a href="@Url.Action("EditPost", "Admin")/${rowObject.id}" 
 						title="Click to view details and edit post">
 							${cellvalue}
 					</a>
@@ -110,6 +102,36 @@
 					$("#grid").jqGrid('setGridParam', { postData: postParams });
 					postParams = $("#grid").jqGrid('getGridParam', 'postData');
 				}
+			});
+
+			$("#grid").on("click", ".toggle-status", function (e) {
+				var ele = $(this),
+					targetUrl = ele.data('url'),
+					cid = ele.data('id'),
+					fieldName = ele.data('field');
+
+				e.preventDefault();
+
+				$.ajax({
+					url: targetUrl,
+					data: { id: cid, flagName: fieldName },
+					type: 'POST',
+					success: function (response) {
+						if (response.success) {
+							if (response.data) {
+								ele.removeClass('text-danger').addClass('text-success');
+								ele.find('i').removeClass('icon-times').addClass('icon-check');
+							} else {
+								ele.removeClass('text-success').addClass('text-danger');
+								ele.find('i').removeClass('icon-check').addClass('icon-times');
+							}
+						} else {
+							toastr.error(response.messages.join('<br/>'));
+						}
+					}
+				});
+
+				return false;
 			});
 
 			$('#filterForm').submit(function (e) {

@@ -19,4 +19,6 @@ public class PostItem
 	public DateTime? ModifiedDate { get; set; }
 
 	public string CategoryName { get; set; }
+
+	public List<string> Tags { get; set; }
 }
