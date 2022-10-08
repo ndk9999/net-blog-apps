@@ -31,12 +31,20 @@
 
 			var formatTitle = function (cellvalue, options, rowObject) {
 				return `
-					<a href="@Url.Action("EditPost", "Admin")/${rowObject.id}" 
+					<a href="@Url.Action("EditPost", "Admin")/${rowObject.id}"
 						title="Click to view details and edit post">
 							${cellvalue}
 					</a>
 					<p>${rowObject.shortDescription}</p>
 				`;
+			};
+
+			var formatCategory = function (cellvalue, options, rowObject) {
+				var tags = rowObject.tags
+					.map(t => `<span class="badge badge-info">${t}</span>`)
+					.join(' ');
+
+				return `<p>${cellvalue}</p><p>${tags}</p>`;
 			};
 
 			var formatToggleableStatus = function (cellvalue, options, rowObject) {
@@ -49,14 +57,15 @@
 			};
 
 			$("#grid").jqGrid({
+				// Server URL and AJAX options
 				url: '@Url.Action("GridPosts", "Admin")',
 				datatype: "json",
 				mtype: 'POST',
+
+				// Columns
 				colModel: [
-					{ name: "id", label: "ID", width: 10 },
-					{
-						name: "title", label: "Title", width: 120, formatter: formatTitle
-					},
+					{ name: "id", label: "ID", width: 10, align: 'center' },
+					{ name: "title", label: "Title", width: 120, formatter: formatTitle },
 					{
 						name: "postedDate", label: "Posted Date", width: 25, align: "center", sorttype: "date",
 						formatter: "date", formatoptions: { newformat: "d-M-Y" }
@@ -65,23 +74,32 @@
 						name: "published", label: "Published", width: 20, align: 'center',
 						formatter: formatToggleableStatus, actionurl: '@Url.Action("TogglePostFlag", "Admin")'
 					},
-					{ name: "categoryName", label: "Category", width: 40 }
+					{ name: "categoryName", label: "Category & Tags", width: 30, formatter: formatCategory }
 				],
+
+				// UI style
 				styleUI: "Bootstrap4",
 				height: '100%',
 				width: '100%',
 				autowidth: true,
 				responsive: true,
 				altRows: true,
-				viewrecords: true,
 				emptyrecords: 'No records to display',
-				pager: '#pager',
+				caption: "Blog Posts",
 				idPrefix: "gb1_",
+				gridview: false,
+
+				// Pagination options & display number of records
+				viewrecords: true,
+				pager: '#pager',
 				rowNum: 10,
-				rowList: [5, 10, 20, 30],
+				rowList: [5, 10, 25, 50, 100],
+
+				// Default sorting
 				sortname: "Id",
 				sortorder: "desc",
-				caption: "Latest Posts",
+
+				// Event handlers
 				beforeRequest: function () {
 					var postParams = $("#grid").jqGrid('getGridParam', 'postData');
 					var formData = $('#filterForm').serializeArray();

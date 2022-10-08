@@ -74,8 +74,8 @@
 	</div>
 
 	<div class="form-group">
-			<input type="checkbox" asp-for="Published" />
-			<label asp-for="Published" class="font-weight-bold text-danger"></label>
+		<input type="checkbox" asp-for="Published" />
+		<label asp-for="Published" class="font-weight-bold text-danger"></label>
 	</div>
 
 	<div class="form-group">
@@ -100,6 +100,21 @@
 
 @section scripts
 {
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/speakingurl/14.0.1/speakingurl.min.js"
+	        integrity="sha512-i1kgQZJBA3n0k1Ar2++6FKibz8fDlaDpZ8ZLKpCnypYznNL++R6FPxpKJP6NGwsO2sAzzX4x78XjiYrLtMWAfA=="
+	        crossorigin="anonymous"
+	        referrerpolicy="no-referrer">
+	</script>
 	<script src="~/lib/tinymce/tinymce.min.js"></script>
-	<partial name="_TinyMCE" />
+
+	<partial name="_TinyMCE"/>
+
+	<script>
+		$(function () {
+			$('#Title').change(function () {
+				var slug = getSlug(this.value);
+				$('#UrlSlug').val(slug).trigger('blur');
+			});
+		});
+	</script>
 }

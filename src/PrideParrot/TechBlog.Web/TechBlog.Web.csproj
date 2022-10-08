@@ -32,6 +32,7 @@
 	<ItemGroup>
 	  <Folder Include="Mapsters\" />
 	  <Folder Include="Providers\" />
+	  <Folder Include="wwwroot\lib\slugify\" />
 	</ItemGroup>
 
 	<ItemGroup>

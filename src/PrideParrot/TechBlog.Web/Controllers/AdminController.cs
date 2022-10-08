@@ -125,6 +125,11 @@ public class AdminController : Controller
 	[HttpPost]
 	public async Task<IActionResult> EditPost(PostEditModel model, string nextAction = "Close")
 	{
+		if (await _blogRepository.IsTitleSlugExistedAsync(model.UrlSlug))
+		{
+			ModelState.AddModelError("UrlSlug", $"Slug '{model.UrlSlug}' is already in use");
+		}
+
 		if (!ModelState.IsValid)
 		{
 			await PopulatePostEditModel(model);
@@ -158,6 +163,47 @@ public class AdminController : Controller
 			? RedirectToAction("EditPost", new {model.Id})
 			: RedirectToAction("Posts");
 	}
+
+	[HttpPost]
+	public async Task<IActionResult> VerifyPostSlug(string urlSlug)
+	{
+		var slugExisted = await _blogRepository.IsTitleSlugExistedAsync(urlSlug);
+
+		return slugExisted
+			? Json($"Slug '{urlSlug}' is already in use")
+			: Json(true);
+	}
+
+
+	public IActionResult Tags()
+	{
+		return View();
+	}
+
+	[HttpPost]
+	public async Task<IActionResult> GridTags(GridRequestModel gridModel)
+	{
+		var pagedTags = await _blogRepository.GetPagedTagsAsync(gridModel);
+
+		return Json(pagedTags.ToGridResponse());
+	}
+
+
+
+	public IActionResult Categories()
+	{
+		return View();
+	}
+
+	[HttpPost]
+	public async Task<IActionResult> GridCategories(GridRequestModel gridModel)
+	{
+		var pagedCategories = await _blogRepository.GetPagedCategoriesAsync(gridModel);
+
+		return Json(pagedCategories.ToGridResponse());
+	}
+
+
 
 	private async Task PopulatePostEditModel(PostEditModel model)
 	{

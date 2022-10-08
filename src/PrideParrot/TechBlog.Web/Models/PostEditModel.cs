@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace TechBlog.Web.Models;
@@ -24,6 +25,7 @@ public class PostEditModel
 
 	[Required, DisplayName("Slug")]
 	[StringLength(1000, ErrorMessage = "Meta: UrlSlug should not exceed 50 characters")]
+	[Remote("VerifyPostSlug", "Admin", HttpMethod = "POST")]
 	public string UrlSlug { get; set; }
 
 	[DisplayName("Publish this post")]

@@ -27,12 +27,22 @@ public interface IBlogRepository
 	Task<IList<CategoryItem>> GetCategoriesAsync(
 		CancellationToken cancellationToken = default);
 
+	Task<IPagedList<CategoryItem>> GetPagedCategoriesAsync(
+		IPagingParams pagingParams,
+		CancellationToken cancellationToken = default);
+
+
 	Task<Tag> GetTagAsync(
 		string slug, 
 		CancellationToken cancellationToken = default);
 
 	Task<IList<TagItem>> GetTagsAsync(
 		CancellationToken cancellationToken = default);
+
+	Task<IPagedList<TagItem>> GetPagedTagsAsync(
+		IPagingParams pagingParams,
+		CancellationToken cancellationToken = default);
+
 
 	Task<Post> GetPostAsync(
 		int year, 
@@ -61,5 +71,9 @@ public interface IBlogRepository
 	Task<Post> CreateOrUpdatePostAsync(
 		Post post,
 		IEnumerable<string> tags,
+		CancellationToken cancellationToken = default);
+
+	Task<bool> IsTitleSlugExistedAsync(
+		string slug, 
 		CancellationToken cancellationToken = default);
 }

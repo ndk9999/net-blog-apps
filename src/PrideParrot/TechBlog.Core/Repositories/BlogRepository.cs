@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
+using SlugGenerator;
 using TechBlog.Core.Collections;
 using TechBlog.Core.Contexts;
 using TechBlog.Core.Contracts;
@@ -75,6 +76,24 @@ public class BlogRepository : IBlogRepository
 			.ToListAsync(cancellationToken);
 	}
 
+	public async Task<IPagedList<CategoryItem>> GetPagedCategoriesAsync(
+		IPagingParams pagingParams,
+		CancellationToken cancellationToken = default)
+	{
+		var tagQuery = _context.Set<Category>()
+			.Select(x => new CategoryItem()
+			{
+				Id = x.Id,
+				Name = x.Name,
+				UrlSlug = x.UrlSlug,
+				Description = x.Description,
+				PostCount = x.Posts.Count(p => p.Published)
+			});
+
+		return await PagedList<CategoryItem>.CreateAsync(tagQuery, pagingParams, cancellationToken);
+	}
+
+
 	public async Task<Tag> GetTagAsync(
 		string slug, CancellationToken cancellationToken = default)
 	{
@@ -97,6 +116,23 @@ public class BlogRepository : IBlogRepository
 			})
 			.ToListAsync(cancellationToken);
 	}
+
+	public async Task<IPagedList<TagItem>> GetPagedTagsAsync(
+		IPagingParams pagingParams, CancellationToken cancellationToken = default)
+	{
+		var tagQuery = _context.Set<Tag>()
+			.Select(x => new TagItem()
+			{
+				Id = x.Id,
+				Name = x.Name,
+				UrlSlug = x.UrlSlug,
+				Description = x.Description,
+				PostCount = x.Posts.Count(p => p.Published)
+			});
+
+		return await PagedList<TagItem>.CreateAsync(tagQuery, pagingParams, cancellationToken);
+	}
+
 
 	public async Task<Post> GetPostAsync(
 		int year, int month, string slug, 
@@ -184,14 +220,11 @@ public class BlogRepository : IBlogRepository
 
 			if (tag == null)
 			{
-				var slug = Regex.Replace(
-					tagName.ToLower().Trim(), "[^a-z0-9]", "-");
-
 				tag = new Tag()
 				{
 					Name = tagName,
 					Description = tagName,
-					UrlSlug = slug.Trim(' ', '-')
+					UrlSlug = tagName.GenerateSlug()
 				};
 
 			}
@@ -209,6 +242,13 @@ public class BlogRepository : IBlogRepository
 		await _context.SaveChangesAsync(cancellationToken);
 
 		return post;
+	}
+
+	public async Task<bool> IsTitleSlugExistedAsync(
+		string slug, CancellationToken cancellationToken = default)
+	{
+		return await _context.Set<Post>()
+			.AnyAsync(x => x.UrlSlug == slug, cancellationToken);
 	}
 
 	private IQueryable<Post> FilterPosts(PostQuery condition)
