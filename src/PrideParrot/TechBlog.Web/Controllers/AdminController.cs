@@ -17,14 +17,18 @@ public class AdminController : Controller
 {
 	private readonly IAuthProvider _authProvider;
 	private readonly IBlogRepository _blogRepository;
+	private readonly ICaptchaProvider _captchaProvider;
 	private readonly IMapper _mapper;
 
 	public AdminController(
 		IAuthProvider authProvider, 
-		IBlogRepository blogRepository, IMapper mapper)
+		IBlogRepository blogRepository, 
+		ICaptchaProvider captchaProvider, 
+		IMapper mapper)
 	{
 		_authProvider = authProvider;
 		_blogRepository = blogRepository;
+		_captchaProvider = captchaProvider;
 		_mapper = mapper;
 	}
 
@@ -45,6 +49,12 @@ public class AdminController : Controller
 	[HttpPost, AllowAnonymous, ValidateAntiForgeryToken]
 	public async Task<IActionResult> Login(LoginModel model, string returnUrl)
 	{
+		if (!await _captchaProvider.VerifyAsync(model))
+		{
+			ModelState.AddModelError("", "Invalid captcha token");
+			return View(model);
+		}
+
 		if (ModelState.IsValid && 
 		    await _authProvider.LoginAsync(model.UserName, model.Password, model.RememberMe))
 		{

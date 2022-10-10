@@ -1,11 +1,13 @@
 ﻿using Mapster;
 using MapsterMapper;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TechBlog.Core.Contexts;
 using TechBlog.Core.Entities;
 using TechBlog.Core.IdentityStores;
 using TechBlog.Core.Repositories;
+using TechBlog.Core.Settings;
 using TechBlog.Web.Mapsters;
 using TechBlog.Web.Providers;
 
@@ -28,24 +30,26 @@ public static class WebApplicationExtensions
 			options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 		builder.Services.AddHttpContextAccessor();
+		builder.Services.AddHttpClient();
 
 		builder.Services.AddScoped<IDataSeeder, DataSeeder>();
 		builder.Services.AddScoped<IBlogRepository, BlogRepository>();
 		builder.Services.AddScoped<IAuthProvider, AuthProvider>();
+		builder.Services.AddScoped<ICaptchaProvider, GoogleRecaptchaProvider>();
+
+		return builder;
+	}
+
+	public static WebApplicationBuilder ConfigureAppSettings(this WebApplicationBuilder builder)
+	{
+		builder.Services.Configure<RecaptchaSettings>(
+			builder.Configuration.GetSection(RecaptchaSettings.ConfigSectionName));
 
 		return builder;
 	}
 
 	public static WebApplicationBuilder ConfigureIdentity(this WebApplicationBuilder builder)
 	{
-		builder.Services.ConfigureApplicationCookie(options =>
-		{
-			options.AccessDeniedPath = new PathString("/access-denied");
-			options.LoginPath = new PathString("/login");
-			options.ExpireTimeSpan = TimeSpan.FromDays(1);
-			options.SlidingExpiration = true;
-		});
-
 		builder.Services
 			.AddIdentity<Account, Role>(options =>
 			{
@@ -59,6 +63,18 @@ public static class WebApplicationExtensions
 			.AddUserStore<AccountStore>()
 			.AddRoleStore<RoleStore>()
 			.AddDefaultTokenProviders();
+
+		// This must be called after AddIdentity
+		builder.Services.ConfigureApplicationCookie(options =>
+		{
+			options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+			options.AccessDeniedPath = new PathString("/access-denied");
+			options.LoginPath = new PathString("/login");
+			options.ExpireTimeSpan = TimeSpan.FromDays(1);
+			options.SlidingExpiration = true;
+			options.Cookie.Name = "TechBlog.Identity";
+			options.Cookie.HttpOnly = true;
+		});
 
 		return builder;
 	}

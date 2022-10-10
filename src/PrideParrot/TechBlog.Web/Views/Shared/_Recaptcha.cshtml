@@ -1,0 +1,27 @@
+﻿@model string
+
+@* model is the name of the submit button *@
+
+@inject IOptions<RecaptchaSettings> RecaptchaOptions
+
+<script src="https://www.google.com/recaptcha/api.js?render=@(RecaptchaOptions.Value.SiteKey)"></script>
+
+<script>
+	$(function () {
+		$('#@(Model)').click(function (e) {
+			e.preventDefault();
+
+			var btn = $(this), form = btn.closest('form');
+
+			grecaptcha.ready(function () {
+				grecaptcha.execute('@(RecaptchaOptions.Value.SiteKey)', { action: 'submit' }).then(function (token) {
+					// Save token to hidden field
+					$('#CaptchaToken').val(token);
+
+					// Submit form
+					form.submit();
+				});
+			});
+		});
+	});
+</script>

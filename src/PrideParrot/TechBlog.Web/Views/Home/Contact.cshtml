@@ -1,7 +1,7 @@
 ﻿@model ContactFormModel
 
 @{
-    ViewData["PageTitle"] = "Contact Me";
+	ViewData["PageTitle"] = "Contact Me";
 	Layout = "_FreeLayout";
 }
 
@@ -19,7 +19,7 @@
 			<div class="col-lg-6 col-xl-3 d-flex mb-4">
 				<div class="info bg-light p-4">
 					<p>
-						<span>Address:</span> 
+						<span>Address:</span>
 						198 West 21th Street, Suite 721 New York NY 10016
 					</p>
 				</div>
@@ -28,7 +28,7 @@
 			<div class="col-lg-6 col-xl-3 d-flex mb-4">
 				<div class="info bg-light p-4">
 					<p>
-						<span>Phone:</span> 
+						<span>Phone:</span>
 						<a href="tel://1234567920">+ 1235 2355 98</a>
 					</p>
 				</div>
@@ -37,7 +37,7 @@
 			<div class="col-lg-6 col-xl-3 d-flex mb-4">
 				<div class="info bg-light p-4">
 					<p>
-						<span>Email:</span> 
+						<span>Email:</span>
 						<a href="mailto:info@yoursite.com">info@yoursite.com</a>
 					</p>
 				</div>
@@ -55,12 +55,17 @@
 
 		<div class="row block-9">
 			<div class="col-lg-6 d-flex">
-				<partial name="_ContactForm" model="Model"/>
+				<partial name="_ContactForm" model="Model" />
 			</div>
 
 			<div class="col-lg-6 d-flex">
-				<partial name="_DirectionMap"/>
+				<partial name="_DirectionMap" />
 			</div>
 		</div>
 	</div>
 </section>
+
+@section scripts
+{
+	<partial name="_Recaptcha" model="@("btnSendMessage")" />
+}

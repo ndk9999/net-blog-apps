@@ -1,0 +1,111 @@
+﻿Add Google reCaptcha V3
+
+-----------------------------------------------------------------------
+Referrences:
+	1. https://www.youtube.com/watch?v=-0_qwxttEoI&ab_channel=ISeeSharp
+	2. https://codingsonata.com/google-recaptcha-v3-server-verification-in-asp-net-core-web-api/
+
+-----------------------------------------------------------------------
+Register our website on Google reCaptcha
+
+	1. Open Google reCAPTCHA link: https://www.google.com/u/1/recaptcha/admin/create
+	2. Register for a key for our website
+		- Label: TechBlog Website
+		- reCAPTCHA Type: reCAPTCHA v3
+		- Domain: localhost
+		- Accept the reCAPTCHA: checked
+	3. Click button Submit
+	4. Save the site key and secret key to appsettings.json
+		- Site key: 6LeAD2wiAAAAALSVZT-uPN3KXFzJEHkCFp5vPbmv
+		- Secret key: 6LeAD2wiAAAAACXyEfWLeJiItRYqjsQzgsh6P-ph
+
+-----------------------------------------------------------------------
+Create setting class for reCAPTCHA
+
+	1. Create new folder in TechBlog.Core project, named Settings
+	2. Create new class RecaptchaSettings
+
+		public class RecaptchaSettings
+		{
+			public const string ConfigSectionName = nameof(RecaptchaSettings);
+
+			public string SiteKey { get; set; }
+
+			public string SecretKey { get; set; }
+
+			public string ApiEndpoint { get; set; }
+		}
+
+-----------------------------------------------------------------------
+Configure reCAPTCHA options
+
+	1. In the class WebApplicationExtensions, add new extension method
+
+		public static WebApplicationBuilder ConfigureAppSettings(this WebApplicationBuilder builder)
+		{
+			builder.Services.Configure<RecaptchaSettings>(
+				builder.Configuration.GetSection(RecaptchaSettings.ConfigSectionName));
+
+			return builder;
+		}
+
+	2. Call the new method form Main method
+
+		.ConfigureServices()
+		.ConfigureAppSettings()
+		.ConfigureIdentity()
+
+-----------------------------------------------------------------------
+Client side integration
+
+	1. Open this link: https://developers.google.com/recaptcha/docs/v3
+	2. Go to section "Programmatically invoke the challenge"
+	3. Read the steps to learn how to add recaptcha to our website
+
+	4. Create new partial view _Recaptcha
+	5. Make sure the form has a hidden input CaptchaToken
+	6. Add that partial view into the view containing the form
+
+-----------------------------------------------------------------------
+Server site integration
+
+	1. Create new interface IRequireRecaptcha
+
+		public interface IRequireCaptcha
+		{
+			public string CaptchaToken { get; set; }
+		}
+
+	2. Make sure the input model class implements that new interface
+	3. Add attribute [Required] to the property CaptchaToken in the
+	   model class (for example: ContactFormModel)
+
+	4. Open this link: https://developers.google.com/recaptcha/docs/verify
+	5. Read the documentation to learn how to verify captcha token
+
+	6. Create new interface ICaptchaProvider in folder Providers
+		
+		public interface ICaptchaProvider
+		{
+			Task<bool> Verify(IRequireCaptcha captcha);
+		}
+
+	7. Implement logic of verifying Google reCAPTCHA in a new class
+	   GoogleRecaptchaProvider
+	
+	8. Register HttpClient and GoogleRecaptchaProvider to application
+	   by adding these statements into the method ConfigureServices
+
+	   builder.Services.AddHttpClient();
+	   builder.Services.AddScoped<ICaptchaProvider, GoogleRecaptchaProvider>();
+
+-----------------------------------------------------------------------
+Add logic to handle user input in controller action
+
+	1. Inject the object of ICaptchaProvider to controller
+	2. Create POST action to handle user data
+
+-----------------------------------------------------------------------
+
+
+

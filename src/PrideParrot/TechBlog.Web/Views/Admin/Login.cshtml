@@ -20,9 +20,11 @@
 				      class="bg-light p-5 contact-form"
 				      method="post"
 				      novalidate>
+					
 					<input type="hidden" name="ReturnUrl" value="@ViewBag.ReturnUrl"/>
+					<input type="hidden" asp-for="CaptchaToken" />
 
-					<div asp-validation-summary="All" class="invalid-feedback"></div>
+					<div asp-validation-summary="All"></div>
 
 					<div class="form-group">
 						<input type="text"
@@ -41,7 +43,7 @@
 					</div>
 
 					<div class="form-group">
-						<button type="submit"
+						<button type="submit" id="btnSignIn"
 						        class="btn btn-primary py-3 px-5">
 							Login
 						</button>
@@ -51,3 +53,8 @@
 		</div>
 	</div>
 </section>
+
+@section scripts
+{
+	<partial name="_Recaptcha" model="@("btnSignIn")"/>
+}

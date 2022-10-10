@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using TechBlog.Core.Contracts;
 
 namespace TechBlog.Web.Models;
 
-public class ContactFormModel
+public class ContactFormModel : IRequireCaptcha
 {
 	[Required]
 	public string FullName { get; set; }
@@ -15,4 +16,7 @@ public class ContactFormModel
 
 	[Required]
 	public string Message { get; set; }
+
+	[Required]
+	public string CaptchaToken { get; set; }
 }

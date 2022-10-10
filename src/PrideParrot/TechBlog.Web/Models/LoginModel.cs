@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using TechBlog.Core.Contracts;
 
 namespace TechBlog.Web.Models;
 
-public class LoginModel
+public class LoginModel : IRequireCaptcha
 {
 	[Required(ErrorMessage = "Username is required")]
 	[DisplayName("Username (*)")]
@@ -15,4 +16,7 @@ public class LoginModel
 
 	[DisplayName("Remember Me")]
 	public bool RememberMe { get; set; }
+
+	[Required]
+	public string CaptchaToken { get; set; }
 }
