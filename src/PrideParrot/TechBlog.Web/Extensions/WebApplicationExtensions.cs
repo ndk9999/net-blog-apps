@@ -1,8 +1,11 @@
-﻿using Mapster;
+﻿using FluentEmail.Core.Defaults;
+using FluentEmail.Core.Interfaces;
+using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using TechBlog.Core.Contexts;
 using TechBlog.Core.Entities;
 using TechBlog.Core.IdentityStores;
@@ -10,6 +13,7 @@ using TechBlog.Core.Repositories;
 using TechBlog.Core.Settings;
 using TechBlog.Web.Mapsters;
 using TechBlog.Web.Providers;
+using static TechBlog.Core.Constants.Default;
 
 namespace TechBlog.Web.Extensions;
 
@@ -44,6 +48,9 @@ public static class WebApplicationExtensions
 	{
 		builder.Services.Configure<RecaptchaSettings>(
 			builder.Configuration.GetSection(RecaptchaSettings.ConfigSectionName));
+
+		builder.Services.Configure<MailingSettings>(
+			builder.Configuration.GetSection(MailingSettings.ConfigSectionName));
 
 		return builder;
 	}
@@ -86,6 +93,42 @@ public static class WebApplicationExtensions
 
 		builder.Services.AddSingleton(config);
 		builder.Services.AddScoped<IMapper, ServiceMapper>();
+
+		return builder;
+	}
+
+	public static WebApplicationBuilder ConfigureFluentEmail(this WebApplicationBuilder builder)
+	{
+		var mailingSettings = builder.Configuration
+			.GetSection(MailingSettings.ConfigSectionName)
+			.Get<MailingSettings>();
+
+		if (mailingSettings.MailingService == MailingServiceNames.Smtp)
+		{
+			var smtpSettings = builder.Configuration
+				.GetSection(SmtpSettings.ConfigSectionName)
+				.Get<SmtpSettings>();
+
+			builder.Services
+				.AddFluentEmail(mailingSettings.SenderAddress, mailingSettings.SenderName)
+				.AddSmtpSender(
+					smtpSettings.Host, 
+					smtpSettings.Port, 
+					smtpSettings.Username, 
+					smtpSettings.Password);
+		}
+		else
+		{
+			var sendGridSettings = builder.Configuration
+				.GetSection(SendGridSettings.ConfigSectionName)
+				.Get<SendGridSettings>();
+
+			builder.Services
+				.AddFluentEmail(mailingSettings.SenderAddress, mailingSettings.SenderName)
+				.AddSendGridSender(sendGridSettings.ApiKey, true);
+		}
+
+		builder.Services.TryAdd(ServiceDescriptor.Singleton<ITemplateRenderer, ReplaceRenderer>(_ => new ReplaceRenderer()));
 
 		return builder;
 	}

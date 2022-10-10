@@ -4,9 +4,12 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<Nullable>disable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-	</PropertyGroup>
+	  <UserSecretsId>d5994791-2ed6-4ad8-a0fd-1c0ef32b00f3</UserSecretsId>
+  </PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="FluentEmail.SendGrid" Version="3.0.2" />
+	  <PackageReference Include="FluentEmail.Smtp" Version="3.0.2" />
 	  <PackageReference Include="Mapster.DependencyInjection" Version="1.0.0" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.9">
 	    <PrivateAssets>all</PrivateAssets>

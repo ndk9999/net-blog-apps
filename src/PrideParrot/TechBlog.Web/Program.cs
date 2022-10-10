@@ -8,7 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 		.ConfigureServices()
 		.ConfigureAppSettings()
 		.ConfigureIdentity()
-		.ConfigureMapster();
+		.ConfigureMapster()
+		.ConfigureFluentEmail();
 }
 
 var app = builder.Build();

@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using FluentEmail.Core;
+using FluentEmail.Core.Defaults;
+using Microsoft.Extensions.Options;
+using TechBlog.Core.Settings;
 using TechBlog.Web.Models;
 using TechBlog.Web.Providers;
 
@@ -9,13 +13,22 @@ namespace TechBlog.Web.Controllers
 	{
 		private readonly ILogger<HomeController> _logger;
 		private readonly ICaptchaProvider _captchaProvider;
+		private readonly IFluentEmail _fluentEmail;
+		private readonly IWebHostEnvironment _environment;
+		private readonly MailingSettings _mailingSettings;
 
 		public HomeController(
 			ILogger<HomeController> logger, 
-			ICaptchaProvider captchaProvider)
+			ICaptchaProvider captchaProvider, 
+			IFluentEmail fluentEmail, 
+			IWebHostEnvironment environment, 
+			IOptions<MailingSettings> mailingSettings)
 		{
 			_logger = logger;
 			_captchaProvider = captchaProvider;
+			_fluentEmail = fluentEmail;
+			_environment = environment;
+			_mailingSettings = mailingSettings.Value;
 		}
 
 		public IActionResult About()
@@ -41,6 +54,16 @@ namespace TechBlog.Web.Controllers
 			{
 				return View(model);
 			}
+
+			var templatePath = Path.Combine(
+				_environment.WebRootPath, "templates", "emails", "contact-us.html");
+
+			await _fluentEmail
+				.To(_mailingSettings.ReceiverAddress)
+				.ReplyTo(model.Email)
+				.Subject(model.Subject)
+				.UsingTemplateFromFile(templatePath, model)
+				.SendAsync();
 
 			TempData["ThankYou"] = "Thank you for contact us. We will reply you soon.";
 
