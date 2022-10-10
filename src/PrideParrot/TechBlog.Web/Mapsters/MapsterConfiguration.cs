@@ -16,10 +16,15 @@ public class MapsterConfiguration : IRegister
 		config.NewConfig<PostFilterModel, PostQuery>()
 			.Map(dest => dest.PublishedOnly, src => false);
 
-		config.NewConfig<PostEditModel, Post>();
+		config.NewConfig<PostEditModel, Post>()
+			.Ignore(dest => dest.Id);
+
 		config.NewConfig<Post, PostEditModel>()
 			.Map(dest => dest.SelectedTags, src => string.Join("\r\n", src.Tags.Select(x => x.Name)))
 			.Ignore(dest => dest.CategoryList)
 			.Ignore(dest => dest.TagList);
+
+		config.NewConfig<CategoryEditModel, Category>()
+			.Ignore(dest => dest.Id);
 	}
 }

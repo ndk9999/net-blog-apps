@@ -21,13 +21,15 @@
 
 @section scripts
 {
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/speakingurl/14.0.1/speakingurl.min.js"
+	        integrity="sha512-i1kgQZJBA3n0k1Ar2++6FKibz8fDlaDpZ8ZLKpCnypYznNL++R6FPxpKJP6NGwsO2sAzzX4x78XjiYrLtMWAfA=="
+	        crossorigin="anonymous"
+	        referrerpolicy="no-referrer">
+	</script>
+
 	<script>
 		$(function () {
 			"use strict";
-
-			var formatButtons = function (cellvalue, options, rowObject) {
-				return '';
-			};
 
 			$("#grid").jqGrid({
 				// Server URL and AJAX options
@@ -37,12 +39,39 @@
 
 				// Columns
 				colModel: [
-					{ name: "id", label: "ID", width: 10, align: 'center' },
-					{ name: "name", label: "Name", width: 50 },
-					{ name: "urlSlug", label: "Url Slug", width: 50 },
-					{ name: "description", label: "Description", width: 100 },
-					{ name: "postCount", label: "#Posts", width: 15, align: 'center', sortable: false },
-					{ name: "id", label: "Actions", width: 20, align: 'center', sortable: false, formatter: formatButtons }
+					{
+						name: "id", label: "ID", width: 10, align: 'center',
+						key: true, editable: true,
+						editrules: { edithidden: true },
+						editoptions: { readonly: true, defaultValue: '0' }
+					},
+					{
+						name: "name", label: "Name", width: 50, editable: true,
+						editrules: { required: true },
+						editoptions: {
+							maxlength: 50,
+							dataEvents: [{
+								type: 'change',
+								fn: function (e) {
+									$('#urlSlug').val(getSlug(this.value));
+								}
+							}]
+						}
+					},
+					{
+						name: "urlSlug", label: "Url Slug", width: 50, editable: true,
+						editoptions: { maxlength: 50 }, editrules: { required: true }
+					},
+					{
+						name: "description", label: "Description", width: 100,
+						editable: true, edittype: 'textarea',
+						editoptions: {
+							maxlength: 500,
+							rows: '4',
+							cols: '50'
+						}
+					},
+					{ name: "postCount", label: "#Posts", width: 15, align: 'center', sortable: false }
 				],
 
 				// UI style
@@ -61,11 +90,50 @@
 				pager: '#pager',
 				rowNum: 25,
 				rowList: [5, 10, 25, 50, 100],
+				toppager: true,
 
 				// Default sorting
 				sortname: "Name",
 				sortorder: "asc",
 			});
+
+			$("#grid").jqGrid('navGrid', '#pager', {
+					cloneToTop: true, // Requires option 'toppager: true'
+					search: false,
+					viewPagerButtons: false
+				},
+				{
+					width: 800,
+					height: 500,
+					closeAfterEdit: true,
+					closeOnEscape: true,
+					processData: 'Saving ...',
+					addCaption: 'Update Category',
+					url: '@Url.Action("EditCategory", "Admin")',
+					afterSubmit: function (response, postData) {
+						var result = JSON.parse(response.responseText);
+						console.log(result.message);
+						return [result.success, result.message, result.success ? result.id : null];
+					}
+				}, // Edit options
+				{
+					width: 800,
+					height: 500,
+					closeAfterAdd: true,
+					closeOnEscape: true,
+					processData: 'Saving ...',
+					addCaption: 'Add Category',
+					url: '@Url.Action("EditCategory", "Admin")'
+				}, // Add options
+				{
+					width: 500,
+					caption: 'Confirm Deletion',
+					processData: 'Deleting ...',
+					msg: 'Are you sure you want to delete the category?',
+					closeOnEscape: true,
+					url: '@Url.Action("DeleteCategory", "Admin")'
+				} // Delete options
+			);
 		});
 	</script>
 }

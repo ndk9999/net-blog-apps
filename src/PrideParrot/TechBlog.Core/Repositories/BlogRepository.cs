@@ -60,6 +60,11 @@ public class BlogRepository : IBlogRepository
 			.FirstOrDefaultAsync(x => x.UrlSlug == slug, cancellationToken);
 	}
 
+	public async Task<Category> GetCategoryByIdAsync(int categoryId)
+	{
+		return await _context.Set<Category>().FindAsync(categoryId);
+	}
+
 	public async Task<IList<CategoryItem>> GetCategoriesAsync(
 		CancellationToken cancellationToken = default)
 	{
@@ -91,6 +96,42 @@ public class BlogRepository : IBlogRepository
 			});
 
 		return await PagedList<CategoryItem>.CreateAsync(tagQuery, pagingParams, cancellationToken);
+	}
+
+	public async Task<Category> CreateOrUpdateCategoryAsync(
+		Category category, CancellationToken cancellationToken = default)
+	{
+		if (category.Id > 0)
+		{
+			_context.Set<Category>().Update(category);
+		}
+		else
+		{
+			_context.Set<Category>().Add(category);
+		}
+
+		await _context.SaveChangesAsync(cancellationToken);
+
+		return category;
+	}
+
+	public async Task<bool> IsCategorySlugExistedAsync(
+		string categorySlug, CancellationToken cancellationToken = default)
+	{
+		return await _context.Set<Category>().AnyAsync(x => x.UrlSlug == categorySlug);
+	}
+
+	public async Task<bool> DeleteCategoryAsync(
+		int categoryId, CancellationToken cancellationToken = default)
+	{
+		var category = await _context.Set<Category>().FindAsync(categoryId);
+
+		if (category is null) return false;
+
+		_context.Set<Category>().Remove(category);
+		var rowsCount = await _context.SaveChangesAsync(cancellationToken);
+
+		return rowsCount > 0;
 	}
 
 
@@ -131,6 +172,19 @@ public class BlogRepository : IBlogRepository
 			});
 
 		return await PagedList<TagItem>.CreateAsync(tagQuery, pagingParams, cancellationToken);
+	}
+
+	public async Task<bool> DeleteTagAsync(
+		int tagId, CancellationToken cancellationToken = default)
+	{
+		var tag = await _context.Set<Tag>().FindAsync(tagId);
+
+		if (tag == null) return false;
+
+		_context.Set<Tag>().Remove(tag);
+		await _context.SaveChangesAsync(cancellationToken);
+
+		return true;
 	}
 
 
@@ -244,7 +298,7 @@ public class BlogRepository : IBlogRepository
 		return post;
 	}
 
-	public async Task<bool> IsTitleSlugExistedAsync(
+	public async Task<bool> IsPostSlugExistedAsync(
 		string slug, CancellationToken cancellationToken = default)
 	{
 		return await _context.Set<Post>()

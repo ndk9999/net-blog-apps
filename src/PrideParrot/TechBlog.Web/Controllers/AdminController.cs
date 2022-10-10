@@ -1,7 +1,6 @@
 ﻿using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TechBlog.Core.DTO;
@@ -125,7 +124,10 @@ public class AdminController : Controller
 	[HttpPost]
 	public async Task<IActionResult> EditPost(PostEditModel model, string nextAction = "Close")
 	{
-		if (await _blogRepository.IsTitleSlugExistedAsync(model.UrlSlug))
+		var post = model.Id > 0 ? await _blogRepository.GetPostByIdAsync(model.Id) : null;
+
+		if (await _blogRepository.IsPostSlugExistedAsync(model.UrlSlug) &&
+		    (post == null || post.UrlSlug != model.UrlSlug))
 		{
 			ModelState.AddModelError("UrlSlug", $"Slug '{model.UrlSlug}' is already in use");
 		}
@@ -135,9 +137,7 @@ public class AdminController : Controller
 			await PopulatePostEditModel(model);
 			return View(model);
 		}
-
-		var post = await _blogRepository.GetPostByIdAsync(model.Id);
-
+		
 		if (post == null)
 		{
 			post = _mapper.Map<Post>(model);
@@ -167,7 +167,7 @@ public class AdminController : Controller
 	[HttpPost]
 	public async Task<IActionResult> VerifyPostSlug(string urlSlug)
 	{
-		var slugExisted = await _blogRepository.IsTitleSlugExistedAsync(urlSlug);
+		var slugExisted = await _blogRepository.IsPostSlugExistedAsync(urlSlug);
 
 		return slugExisted
 			? Json($"Slug '{urlSlug}' is already in use")
@@ -188,6 +188,27 @@ public class AdminController : Controller
 		return Json(pagedTags.ToGridResponse());
 	}
 
+	[HttpPost]
+	public async Task<IActionResult> DeleteTag(int id)
+	{
+		if (await _blogRepository.DeleteTagAsync(id))
+		{
+			return Json(new
+			{
+				Id = id,
+				Success = true,
+				Message = $"Tag '{id}' has been deleted"
+			});
+		}
+
+		return Json(new
+		{
+			Id = 0,
+			Success = false,
+			Message = $"Tag '{id}' not found"
+		});
+	}
+
 
 
 	public IActionResult Categories()
@@ -201,6 +222,70 @@ public class AdminController : Controller
 		var pagedCategories = await _blogRepository.GetPagedCategoriesAsync(gridModel);
 
 		return Json(pagedCategories.ToGridResponse());
+	}
+
+	[HttpPost]
+	public async Task<IActionResult> EditCategory(CategoryEditModel model)
+	{
+		var category = model.Id > 0
+			? await _blogRepository.GetCategoryByIdAsync(model.Id)
+			: null;
+
+		if (await _blogRepository.IsCategorySlugExistedAsync(model.UrlSlug) &&
+		    (category == null || category.UrlSlug != model.UrlSlug))
+		{
+			ModelState.AddModelError("UrlSlug", $"Slug '{model.UrlSlug}' is already in use");
+		}
+
+		if (!ModelState.IsValid)
+		{
+			return Json(new
+			{
+				Id = 0,
+				Success = false,
+				Message = "Invalid category data"
+			});
+		}
+
+		if (category == null)
+		{
+			category = _mapper.Map<Category>(model);
+			category.Id = 0;
+		}
+		else
+		{
+			_mapper.Map(model, category);
+		}
+
+		await _blogRepository.CreateOrUpdateCategoryAsync(category);
+
+		return Json(new
+		{
+			Id = category.Id,
+			Success = true,
+			Message = $"Category '{model.Name}' has been saved"
+		});
+	}
+
+	[HttpPost]
+	public async Task<IActionResult> DeleteCategory(int id)
+	{
+		if (await _blogRepository.DeleteCategoryAsync(id))
+		{
+			return Json(new
+			{
+				Id = id,
+				Success = true,
+				Message = $"Category '{id}' has been deleted"
+			});
+		}
+
+		return Json(new
+		{
+			Id = 0,
+			Success = false,
+			Message = $"Category '{id}' not found"
+		});
 	}
 
 

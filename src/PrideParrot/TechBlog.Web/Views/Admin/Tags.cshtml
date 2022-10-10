@@ -26,7 +26,10 @@
 			"use strict";
 
 			var formatButtons = function (cellvalue, options, rowObject) {
-				return '';
+				if (rowObject.postCount > 0) return '';
+
+				return '<button type="button" class="btn btn-sm btn-danger" title="Delete tag ' + rowObject.name +
+					'" data-action="delete" data-id="' + cellvalue + '"><span class="icon-trash"></span></button>';
 			};
 
 			$("#grid").jqGrid({
@@ -42,7 +45,10 @@
 					{ name: "urlSlug", label: "Url Slug", width: 50 },
 					{ name: "description", label: "Description", width: 100 },
 					{ name: "postCount", label: "#Posts", width: 15, align: 'center', sortable: false },
-					{ name: "id", label: "Actions", width: 20, align: 'center', sortable: false, formatter: formatButtons }
+					{
+						name: "id", label: "Actions", width: 20, align: 'center',
+						sortable: false, formatter: formatButtons
+					}
 				],
 
 				// UI style
@@ -66,6 +72,17 @@
 				sortname: "Name",
 				sortorder: "asc",
 			});
+
+			$("#grid").on('click', 'button[data-action]', function () {
+				var btn = $(this), tagId = btn.data('id');
+				if (confirm('Are you sure you want to delete the tag?')) {
+					$.post('@Url.Action("DeleteTag", "Admin")/' + tagId, function (response) {
+						console.log(response.message);
+						$("#grid").trigger('reloadGrid');
+					});
+				}
+			});
+
 		});
 	</script>
 }

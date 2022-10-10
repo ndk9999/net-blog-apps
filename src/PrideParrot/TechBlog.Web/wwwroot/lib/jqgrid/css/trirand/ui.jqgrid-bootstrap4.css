@@ -637,7 +637,7 @@ div.tablediv > .table-bordered {
 	height:auto;
 }
 .EditTable .FormData td { 
-	height:37px !important;
+	/*height:37px !important;*/
 }
 .ui-jqdialog-content td.EditButton {
 	text-align: right; 
@@ -671,10 +671,12 @@ div.tablediv > .table-bordered {
 	border: 0 none; 
 	padding: 2px;
 	white-space: nowrap;
+	width: 30%;
 }
 .ui-jqdialog-content .DataTD {
 	padding: 2px 5px;
-	border: 0 none; 
+	border: 0 none;
+	width: 70%;
 	/*vertical-align: top;*/
 }
 .ui-jqdialog-content .form-view-data {
