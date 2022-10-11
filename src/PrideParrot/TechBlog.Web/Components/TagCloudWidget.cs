@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TechBlog.Core.Repositories;
+using TechBlog.Services.Blogs;
 
 namespace TechBlog.Web.Components;
 

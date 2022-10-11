@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using FluentEmail.Core;
-using FluentEmail.Core.Defaults;
 using Microsoft.Extensions.Options;
 using TechBlog.Core.Settings;
+using TechBlog.Services.Security;
 using TechBlog.Web.Models;
-using TechBlog.Web.Providers;
 
 namespace TechBlog.Web.Controllers
 {

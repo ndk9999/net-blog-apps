@@ -20,6 +20,8 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\TechBlog.Core\TechBlog.Core.csproj" />
+		<ProjectReference Include="..\TechBlog.Data\TechBlog.Data.csproj" />
+		<ProjectReference Include="..\TechBlog.Services\TechBlog.Services.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -35,7 +37,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Mapsters\" />
-	  <Folder Include="Providers\" />
 	  <Folder Include="wwwroot\lib\slugify\" />
 	</ItemGroup>
 

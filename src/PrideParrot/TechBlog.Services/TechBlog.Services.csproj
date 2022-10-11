@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.9" />
+    <PackageReference Include="SlugGenerator" Version="2.0.2" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.20" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TechBlog.Core\TechBlog.Core.csproj" />
+    <ProjectReference Include="..\TechBlog.Data\TechBlog.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+
+</Project>

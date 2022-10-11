@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TechBlog.Core.DTO;
 using TechBlog.Core.Entities;
-using TechBlog.Core.Repositories;
+using TechBlog.Services.Blogs;
+using TechBlog.Services.Security;
 using TechBlog.Web.Extensions;
 using TechBlog.Web.Models;
-using TechBlog.Web.Providers;
 
 namespace TechBlog.Web.Controllers;
 
@@ -94,7 +94,7 @@ public class AdminController : Controller
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> GridPosts(PostFilterModel filterModel, GridRequestModel gridModel)
+	public async Task<IActionResult> GridPosts(PostFilterModel filterModel, GridRequest gridModel)
 	{
 		var postQuery = _mapper.Map<PostQuery>(filterModel);
 		var postsList = await _blogRepository.GetPagedPostsAsync(
@@ -191,7 +191,7 @@ public class AdminController : Controller
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> GridTags(GridRequestModel gridModel)
+	public async Task<IActionResult> GridTags(GridRequest gridModel)
 	{
 		var pagedTags = await _blogRepository.GetPagedTagsAsync(gridModel);
 
@@ -227,7 +227,7 @@ public class AdminController : Controller
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> GridCategories(GridRequestModel gridModel)
+	public async Task<IActionResult> GridCategories(GridRequest gridModel)
 	{
 		var pagedCategories = await _blogRepository.GetPagedCategoriesAsync(gridModel);
 

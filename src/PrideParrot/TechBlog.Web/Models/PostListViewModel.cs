@@ -1,7 +1,7 @@
 ﻿using TechBlog.Core.Constants;
 using TechBlog.Core.DTO;
 using TechBlog.Core.Entities;
-using TechBlog.Core.Repositories;
+using TechBlog.Services.Blogs;
 
 namespace TechBlog.Web.Models;
 

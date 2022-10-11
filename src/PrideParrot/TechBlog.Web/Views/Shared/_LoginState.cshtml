@@ -1,21 +1,23 @@
-﻿@if (AuthService.IsLoggedIn)
+﻿@inject IAuthProvider AuthService
+
+@if (AuthService.IsLoggedIn)
 {
 	<li>
 		<form asp-controller="Admin"
-		      asp-action="Logout"
-		      method="post">
+			  asp-action="Logout"
+			  method="post">
 			<div class="btn-group">
-				<button type="button" 
-				        class="btn btn-success"
+				<button type="button"
+						class="btn btn-success"
 						title="Go to Dashboard"
-				        onclick="location.href='@Url.Action("Dashboard", "Admin")'">
+						onclick="location.href='@Url.Action("Dashboard", "Admin")'">
 					Hello @AuthService.Username!
 				</button>
 				<button type="submit" class="btn btn-danger">
 					Logout
 				</button>
 			</div>
-			
+
 		</form>
 	</li>
 }

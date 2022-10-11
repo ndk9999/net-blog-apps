@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
 using TechBlog.Core.Contracts;
 
@@ -9,7 +8,7 @@ public class PagedList<T> : IPagedList<T>
 {
 	private readonly List<T> _subset = new List<T>();
 
-	private PagedList(IList<T> items, int pageNumber, int pageSize, int totalCount)
+	public PagedList(IList<T> items, int pageNumber, int pageSize, int totalCount)
 	{
 		PageNumber = pageNumber;
 		PageSize = pageSize;
@@ -103,20 +102,5 @@ public class PagedList<T> : IPagedList<T>
 	public virtual int Count => _subset.Count;
 
 	#endregion
-
-
-	public static async Task<PagedList<T>> CreateAsync(
-		IQueryable<T> source, 
-		IPagingParams pagingParams,
-		CancellationToken cancellationToken = default)
-	{
-		var totalCount = await source.CountAsync(cancellationToken);
-		var items = await source
-			.OrderBy(pagingParams.GetOrderExpression())
-			.Skip((pagingParams.PageNumber - 1) * pagingParams.PageSize)
-			.Take(pagingParams.PageSize)
-			.ToListAsync(cancellationToken);
-
-		return new PagedList<T>(items, pagingParams.PageNumber, pagingParams.PageSize, totalCount);
-	}
+	
 }

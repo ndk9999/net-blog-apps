@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Globalization;
 using TechBlog.Core.Constants;
 using TechBlog.Core.DTO;
-using TechBlog.Core.Repositories;
+using TechBlog.Services.Blogs;
 using TechBlog.Web.Models;
 
 namespace TechBlog.Web.Controllers;
