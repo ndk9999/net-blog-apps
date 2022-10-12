@@ -32,6 +32,13 @@ public class PostMap : IEntityTypeConfiguration<Post>
 			.HasMaxLength(1000)
 			.IsRequired();
 
+		builder.Property(x => x.ImageUrl)
+			.HasMaxLength(1000);
+
+		builder.Property(x => x.ViewCount)
+			.IsRequired()
+			.HasDefaultValue(0);
+
 		builder.HasOne(x => x.Category)
 			.WithMany(x => x.Posts)
 			.HasForeignKey(x => x.CategoryId)

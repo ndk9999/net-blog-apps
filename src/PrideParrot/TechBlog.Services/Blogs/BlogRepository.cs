@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SlugGenerator;
-using TechBlog.Core.Collections;
 using TechBlog.Core.Contracts;
 using TechBlog.Core.DTO;
 using TechBlog.Core.Entities;
@@ -66,9 +65,17 @@ public class BlogRepository : IBlogRepository
 	}
 
 	public async Task<IList<CategoryItem>> GetCategoriesAsync(
+		bool showOnMenu = false,
 		CancellationToken cancellationToken = default)
 	{
-		return await _context.Set<Category>()
+		IQueryable<Category> categories = _context.Set<Category>();
+
+		if (showOnMenu)
+		{
+			categories = categories.Where(x => x.ShowOnMenu);
+		}
+
+		return await categories
 			.OrderBy(x => x.Name)
 			.Select(x => new CategoryItem()
 			{
@@ -76,6 +83,7 @@ public class BlogRepository : IBlogRepository
 				Name = x.Name,
 				UrlSlug = x.UrlSlug,
 				Description = x.Description,
+				ShowOnMenu = x.ShowOnMenu,
 				PostCount = x.Posts.Count(p => p.Published)
 			})
 			.ToListAsync(cancellationToken);
@@ -92,6 +100,7 @@ public class BlogRepository : IBlogRepository
 				Name = x.Name,
 				UrlSlug = x.UrlSlug,
 				Description = x.Description,
+				ShowOnMenu = x.ShowOnMenu,
 				PostCount = x.Posts.Count(p => p.Published)
 			});
 
@@ -133,7 +142,7 @@ public class BlogRepository : IBlogRepository
 
 		return rowsCount > 0;
 	}
-
+	
 
 	public async Task<Tag> GetTagAsync(
 		string slug, CancellationToken cancellationToken = default)
@@ -303,6 +312,17 @@ public class BlogRepository : IBlogRepository
 	{
 		return await _context.Set<Post>()
 			.AnyAsync(x => x.UrlSlug == slug, cancellationToken);
+	}
+
+	public async Task IncreaseViewCountAsync(
+		int postId, CancellationToken cancellationToken = default)
+	{
+		await _context.Set<Post>()
+			.Where(x => x.Id == postId)
+			.UpdateFromQueryAsync(x => new Post()
+			{
+				ViewCount = x.ViewCount + 1
+			}, cancellationToken);
 	}
 
 	private IQueryable<Post> FilterPosts(PostQuery condition)

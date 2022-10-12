@@ -27,6 +27,7 @@ public interface IBlogRepository
 	Task<Category> GetCategoryByIdAsync(int categoryId);
 
 	Task<IList<CategoryItem>> GetCategoriesAsync(
+		bool showOnMenu = false,
 		CancellationToken cancellationToken = default);
 
 	Task<IPagedList<CategoryItem>> GetPagedCategoriesAsync(
@@ -44,7 +45,7 @@ public interface IBlogRepository
 	Task<bool> DeleteCategoryAsync(
 		int categoryId, 
 		CancellationToken cancellationToken = default);
-
+	
 
 	Task<Tag> GetTagAsync(
 		string slug, 
@@ -93,5 +94,9 @@ public interface IBlogRepository
 
 	Task<bool> IsPostSlugExistedAsync(
 		string slug, 
+		CancellationToken cancellationToken = default);
+
+	Task IncreaseViewCountAsync(
+		int postId,
 		CancellationToken cancellationToken = default);
 }

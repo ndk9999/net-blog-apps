@@ -1,11 +1,10 @@
 ﻿using System.Net.Http.Json;
-using System.Text.Json.Serialization;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using TechBlog.Core.Contracts;
 using TechBlog.Core.Settings;
-using TechBlog.Services.Security;
 
-namespace TechBlog.Web.Providers;
+namespace TechBlog.Services.Security;
 
 public class GoogleRecaptchaProvider : ICaptchaProvider
 {
@@ -50,10 +49,10 @@ public class GoogleRecaptchaProvider : ICaptchaProvider
 
 		public string HostName { get; set; }
 
-		[JsonPropertyName("challenge_ts")]
+		[JsonProperty("challenge_ts")]
 		public DateTime ChallengeTs { get; set; }
 
-		[JsonPropertyName("error-codes")]
+		[JsonProperty("error-codes")]
 		public List<string> ErrorCodes { get; set; }
 	}
 }

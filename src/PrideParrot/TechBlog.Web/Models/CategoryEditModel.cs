@@ -15,4 +15,6 @@ public class CategoryEditModel
 
 	[MaxLength(500)]
 	public string Description { get; set; }
+
+	public bool ShowOnMenu { get; set; }
 }

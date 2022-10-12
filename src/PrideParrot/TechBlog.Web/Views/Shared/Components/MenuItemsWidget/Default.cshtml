@@ -1,0 +1,12 @@
+﻿@model IList<CategoryItem>
+
+@foreach (var item in Model)
+{
+	<li>
+		<a asp-controller="Blog"
+		   asp-action="Category"
+		   asp-route-slug="@item.UrlSlug">
+			@item.Name
+		</a>
+	</li>
+}

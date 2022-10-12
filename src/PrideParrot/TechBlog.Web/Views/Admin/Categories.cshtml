@@ -30,7 +30,7 @@
 	<script>
 		$(function () {
 			"use strict";
-
+			
 			$("#grid").jqGrid({
 				// Server URL and AJAX options
 				url: '@Url.Action("GridCategories", "Admin")',
@@ -69,6 +69,13 @@
 							maxlength: 500,
 							rows: '4',
 							cols: '50'
+						}
+					},
+					{
+						name: "showOnMenu", label: "On Menu", width: 20, align: 'center',
+						formatter: 'checkbox', editable: true, edittype: 'checkbox',
+						editoptions: {
+							value: "True:False"
 						}
 					},
 					{ name: "postCount", label: "#Posts", width: 15, align: 'center', sortable: false }
@@ -114,6 +121,9 @@
 						var result = JSON.parse(response.responseText);
 						console.log(result.message);
 						return [result.success, result.message, result.success ? result.id : null];
+					},
+					beforeShowForm: function (formid) {
+						console.log(formid);
 					}
 				}, // Edit options
 				{
@@ -134,6 +144,7 @@
 					url: '@Url.Action("DeleteCategory", "Admin")'
 				} // Delete options
 			);
+			
 		});
 	</script>
 }

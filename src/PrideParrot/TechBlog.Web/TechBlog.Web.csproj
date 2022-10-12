@@ -31,6 +31,7 @@
 	<ItemGroup>
 	  <_ContentIncludedByDefault Remove="Views\Admin\Login.cshtml" />
 	  <_ContentIncludedByDefault Remove="Views\Admin\_PostFilterPanel.cshtml" />
+	  <_ContentIncludedByDefault Remove="Views\Blog\_Author.cshtml" />
 	  <_ContentIncludedByDefault Remove="Views\Shared\_LoginState.cshtml" />
 	  <_ContentIncludedByDefault Remove="Views\Shared\_Recaptcha.cshtml" />
 	</ItemGroup>
@@ -230,6 +231,10 @@
 
 	<ItemGroup>
 	  <UpToDateCheckInput Remove="Views\Shared\_Recaptcha.cshtml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="Views\Blog\_Author.cshtml" />
 	</ItemGroup>
 
 </Project>

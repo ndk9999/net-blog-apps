@@ -123,6 +123,8 @@ public class BlogController : Controller
 			});
 		}
 
+		await _blogRepository.IncreaseViewCountAsync(post.Id);
+
 		ViewBag.PageTitle = post.Title;
 
 		return View("Single", post);

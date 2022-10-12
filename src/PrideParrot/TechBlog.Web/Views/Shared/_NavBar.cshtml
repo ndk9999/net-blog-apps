@@ -6,32 +6,23 @@
 				Home
 			</a>
 		</li>
-		<li>
-			<a asp-controller="Blog"
-			   asp-action="Category"
-			   asp-route-slug="programming-languages">
-				Programming Languages
-			</a>
-		</li>
-		<li>
-			<a asp-controller="Blog"
-			   asp-action="Category"
-			   asp-route-slug="design-patterns">
-				Design Patterns
-			</a>
-		</li>
+		
+		@await Component.InvokeAsync("MenuItemsWidget")
+
 		<li>
 			<a asp-controller="Home"
 			   asp-action="About">
 				About Me
 			</a>
 		</li>
+		
 		<li>
 			<a asp-controller="Home"
 			   asp-action="Contact">
 				Contact
 			</a>
 		</li>
+		
 		<partial name="_LoginState" />
 	</ul>
 </nav>

@@ -22,5 +22,9 @@ public class CategoryMap : IEntityTypeConfiguration<Category>
 		builder.Property(x => x.UrlSlug)
 			.HasMaxLength(50)
 			.IsRequired();
+
+		builder.Property(x => x.ShowOnMenu)
+			.IsRequired()
+			.HasDefaultValue(false);
 	}
 }
