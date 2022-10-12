@@ -1,0 +1,32 @@
+﻿Create RSS Feed
+
+-----------------------------------------------------------------------
+Referrences:
+	1. https://www.youtube.com/watch?v=UjVzrxwN6uE&ab_channel=CsharpSpace
+	2. https://hamedfathi.me/a-professional-asp.net-core-rss/
+	3. https://scatteredcode.net/create-an-rss-feed-from-your-site
+
+-----------------------------------------------------------------------
+Install the NuGet Packages
+
+	1. System.ServiceModel.Syndication
+	2. Snickler.RSSCore (Generate RSS via ASP.NET Middleware)
+
+-----------------------------------------------------------------------
+Configure RSS settings
+
+	1. Create new class RssSettings
+	2. Add config section for RSS into appsettings.json
+	3. Register option RssSettings in the method ConfigureAppSettings
+
+-----------------------------------------------------------------------
+Generate RSS Feed
+
+	1. Create new folder Rss in project TechBlog.Services
+	2. Create new interface IFeedProvider
+	3. Create new class FeedProvider, implement the interface above
+	4. Implement logic of the method CreateAsync
+	5. Register new service in the method ConfigureServices
+	6. Call service to generate RSS feed from action Rss in HomeController
+
+-----------------------------------------------------------------------

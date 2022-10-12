@@ -33,21 +33,25 @@
 		<div class="meta-wrap">
 			<p class="meta">
 				<span>
-					<i class="icon-calendar mr-2"></i> 
+					<i class="icon-calendar mr-2"></i>
 					@Model.PostedDate.ToString("g")
+				</span>
+				<span title="@Model.ViewCount views" class="text-info">
+					<i class="icon-eye mr-2"></i>
+					@Model.ViewCount
 				</span>
 				<span>
 					<a asp-controller="Blog"
 					   asp-action="Category"
 					   asp-route-slug="@Model.Category.UrlSlug"
 					   title="@Model.Category.Name">
-						<i class="icon-folder-o mr-2"></i> 
+						<i class="icon-folder-o mr-2"></i>
 						@Model.Category.Name
 					</a>
 				</span>
 				<span class="tagcloud d-inline-block">
 					<i class="icon-tags mr-2"></i>
-					<partial name="_TagList" model="Model.Tags"/>
+					<partial name="_TagList" model="Model.Tags" />
 				</span>
 			</p>
 		</div>

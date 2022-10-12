@@ -2,27 +2,38 @@
 	<ul>
 		<li class="colorlib-active">
 			<a asp-controller="Blog"
-			   asp-action="Posts">
+			   asp-action="Posts"
+			   title="View latest posts">
 				Home
 			</a>
 		</li>
-		
+
 		@await Component.InvokeAsync("MenuItemsWidget")
 
 		<li>
 			<a asp-controller="Home"
-			   asp-action="About">
+			   asp-action="About"
+			   title="Get more information about me">
 				About Me
 			</a>
 		</li>
-		
+
 		<li>
 			<a asp-controller="Home"
-			   asp-action="Contact">
+			   asp-action="Contact"
+			   title="View contact information and send us a message">
 				Contact
 			</a>
 		</li>
-		
+
+		<li>
+			<a asp-controller="Home"
+			   asp-action="Rss"
+			   title="Subscribe for our feed">
+				RSS Feed
+			</a>
+		</li>
+
 		<partial name="_LoginState" />
 	</ul>
 </nav>

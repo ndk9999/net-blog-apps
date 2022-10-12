@@ -40,6 +40,11 @@ public static class RouteExtensions
 			defaults: new { controller = "Home", action = "Subscribe" });
 
 		endpoints.MapControllerRoute(
+			name: "rss-feed",
+			pattern: "rss",
+			defaults: new { controller = "Home", action = "Rss" });
+
+		endpoints.MapControllerRoute(
 			name: "posts-by-category",
 			pattern: "category/{slug}",
 			defaults: new { controller = "Blog", action = "Category" });

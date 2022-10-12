@@ -1,6 +1,12 @@
 ﻿@model PostListViewModel
 
-@if (Model.Category != null || Model.Tag != null || !string.IsNullOrWhiteSpace(Model.Keyword))
+@if (Model.Category?.ShowOnMenu == true)
+{
+	<h1>
+		@Model.Category.Name
+	</h1>
+}
+else if (Model.Category != null || Model.Tag != null || !string.IsNullOrWhiteSpace(Model.Keyword))
 {
 	<h1>
 		@ViewData["PageTitle"]
@@ -18,7 +24,7 @@
 		}
 	</div>
 
-	<partial name="_Pager" model="Model"/>
+	<partial name="_Pager" model="Model" />
 }
 else
 {

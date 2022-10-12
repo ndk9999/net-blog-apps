@@ -3,23 +3,55 @@
 -----------------------------------------------------------------------
 Referrences:
 
-	1. 
-	2. 
+	1. https://github.com/lukencode/FluentEmail
+	2. https://www.twilio.com/blog/send-emails-in-csharp-dotnet-with-fluentemail-and-sendgrid
+	3. https://lukelowrey.com/dotnet-email-guide-2021/
+	4. https://www.youtube.com/watch?v=qSeO9886nRM&ab_channel=IAmTimCorey
 
 -----------------------------------------------------------------------
+Install the NuGet Packages
 
-
-
------------------------------------------------------------------------
-
-
-
------------------------------------------------------------------------
-
-
+	1. FluentEmail.Core (Automatically installed along with others pkg)
+	2. FluentEmail.Smtp
+	3. FluentEmail.SendGrid
+	4. FluentEmail.Liquid (Optional - Generate emails using Liquid templates)
+	5. FluentEmail.Razor (Optional - Generate emails using Razor templates)
 
 -----------------------------------------------------------------------
+Get SendGrid API Key
 
+	1. Follow the instructions in the article below to register a free
+	   SendGrid account and create API Key for our app
+	   https://www.twilio.com/blog/send-emails-in-csharp-dotnet-with-fluentemail-and-sendgrid
 
+	2. Follow the steps in one of these articles to add app password
+	   to your Gmail account you want to use to send email using SMTP
+	   https://devanswers.co/create-application-specific-password-gmail/
+	   https://support.google.com/mail/answer/185833?hl=en
+
+-----------------------------------------------------------------------
+Configure mailing settings
+
+	1. Create 3 new classes: MailingSettings, SmtpSettings, SendGridSettings
+	2. Add setting values into the appsettings.json file
+	3. Register option for new classes in the method ConfigureAppSettings
+	
+-----------------------------------------------------------------------
+Create email templates
+	
+	1. Create a new folder "templates" in the folder wwwroot
+	2. Create a new folder "emails" in the folder "templates"
+	3. Create a new file "contact-us.html" in the folder "emails"
+	4. Write HTML code to build email template
+
+-----------------------------------------------------------------------
+Implement logic for sending email
+
+	1. Create new extension method ConfigureFluentEmail for registering 
+	   IFluentEmail to DI container
+	2. Call this extension method in the Main method
+	3. Inject IFluentEmail and MailingSettings objects into controller
+	   class (for example HomeController)
+	4. Implement logic for sending email in action method
 
 -----------------------------------------------------------------------

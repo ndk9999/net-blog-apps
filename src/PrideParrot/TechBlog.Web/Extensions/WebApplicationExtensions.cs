@@ -14,6 +14,7 @@ using TechBlog.Data.Seeders;
 using TechBlog.Services.Blogs;
 using TechBlog.Services.IdentityStores;
 using TechBlog.Services.Media;
+using TechBlog.Services.Rss;
 using TechBlog.Services.Security;
 using TechBlog.Web.Mapsters;
 using static TechBlog.Core.Constants.Default;
@@ -45,6 +46,26 @@ public static class WebApplicationExtensions
 		builder.Services.AddScoped<ICaptchaProvider, GoogleRecaptchaProvider>();
 		builder.Services.AddScoped<IMediaManager, LocalFileSystemMediaManager>();
 
+		// RSS Feed services
+		builder.Services.AddScoped<IFeedProvider, FeedProvider>();
+		builder.Services.TryAdd(ServiceDescriptor.Scoped<Func<Post, string>>(serviceProvider =>
+		{
+			var linkGenerator = serviceProvider.GetRequiredService<LinkGenerator>();
+			var contextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+
+			return post => linkGenerator.GetUriByAction(
+				contextAccessor.HttpContext,
+				"Post",
+				"Blog",
+				new
+				{
+					year = post.PostedDate.Year,
+					month = post.PostedDate.Month,
+					day = post.PostedDate.Day,
+					slug = post.UrlSlug
+				});
+		}));
+
 		return builder;
 	}
 
@@ -62,6 +83,9 @@ public static class WebApplicationExtensions
 
 		builder.Services.Configure<MailingSettings>(
 			builder.Configuration.GetSection(MailingSettings.ConfigSectionName));
+
+		builder.Services.Configure<RssSettings>(
+			builder.Configuration.GetSection(RssSettings.ConfigSectionName));
 
 		return builder;
 	}

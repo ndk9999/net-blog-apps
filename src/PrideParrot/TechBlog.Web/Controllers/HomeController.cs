@@ -3,8 +3,10 @@ using System.Diagnostics;
 using FluentEmail.Core;
 using Microsoft.Extensions.Options;
 using TechBlog.Core.Settings;
+using TechBlog.Services.Rss;
 using TechBlog.Services.Security;
 using TechBlog.Web.Models;
+using System.IO;
 
 namespace TechBlog.Web.Controllers
 {
@@ -14,6 +16,7 @@ namespace TechBlog.Web.Controllers
 		private readonly ICaptchaProvider _captchaProvider;
 		private readonly IFluentEmail _fluentEmail;
 		private readonly IWebHostEnvironment _environment;
+		private readonly IFeedProvider _feedProvider;
 		private readonly MailingSettings _mailingSettings;
 
 		public HomeController(
@@ -21,12 +24,14 @@ namespace TechBlog.Web.Controllers
 			ICaptchaProvider captchaProvider, 
 			IFluentEmail fluentEmail, 
 			IWebHostEnvironment environment, 
+			IFeedProvider feedProvider, 
 			IOptions<MailingSettings> mailingSettings)
 		{
 			_logger = logger;
 			_captchaProvider = captchaProvider;
 			_fluentEmail = fluentEmail;
 			_environment = environment;
+			_feedProvider = feedProvider;
 			_mailingSettings = mailingSettings.Value;
 		}
 
@@ -73,6 +78,14 @@ namespace TechBlog.Web.Controllers
 		public IActionResult Subscribe(SubscribeFormModel model)
 		{
 			return View();
+		}
+
+		[ResponseCache(Duration = 3600)]
+		public async Task<IActionResult> Rss()
+		{
+			var rssBuffer = await _feedProvider.CreateAsync();
+			
+			return File(rssBuffer, "application/rss+xml; charset=utf-8");
 		}
 
 		[Route("/error/{code:int}")]
