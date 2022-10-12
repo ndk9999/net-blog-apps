@@ -4,6 +4,14 @@
 	var imageUrl = string.IsNullOrWhiteSpace(Model.ImageUrl)
 		? $"/images/image_{Model.Id % 10 + 1}.jpg"
 		: $"/{Model.ImageUrl}";
+
+	var absoluteUrl = Url.Action("Post", "Blog", new
+	{
+		year = Model.PostedDate.Year,
+		month = Model.PostedDate.Month,
+		day = Model.PostedDate.Day,
+		slug = Model.UrlSlug
+	}, protocol: Context.Request.Scheme);
 }
 
 <div class="pt-md-4">
@@ -50,12 +58,49 @@
 	<p>
 		@Html.Raw(Model.Description)
 	</p>
+	
+	<div class="row my-5">
+		<div class="col-md-6">
+			<div class="tag-widget post-tag-container">
+				<div class="tagcloud">
+					<partial name="_TagList" model="Model.Tags" />
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-md-6">
+			<div class="tagcloud text-right">
+				<strong>SHARE: </strong>
 
-	<div class="tag-widget post-tag-container mb-5 mt-5">
-		<div class="tagcloud">
-			<partial name="_TagList" model="Model.Tags" />
+				<a href="https://facebook.com/sharer.php?u=@absoluteUrl" 
+				   target="_blank"
+				   title="Share on Facebook"
+				   class="tag-cloud-link bg-primary text-light">
+					<span class="icon-facebook"></span>
+				</a>
+				<a href="https://twitter.com/intent/tweet?url=@absoluteUrl&text=@Model.Title"
+				   target="_blank"
+				   title="Share on Twitter"
+				   class="tag-cloud-link bg-info text-light">
+					<span class="icon-twitter"></span>
+				</a>
+				<a href="http://www.linkedin.com/shareArticle?mini=true&url=@absoluteUrl&title=@Model.Title" 
+				   target="_blank"
+				   title="Share on LinkedIn"
+				   class="tag-cloud-link bg-warning text-light">
+					<span class="icon-linkedin"></span>
+				</a>
+				<a href="https://plus.google.com/share?url=@absoluteUrl"
+				   target="_blank"
+				   title="Share on Google+"
+				   class="tag-cloud-link bg-danger text-light">
+					<span class="icon-google-plus"></span>
+				</a>
+			</div>
 		</div>
 	</div>
+
+	
 
 	<partial name="_Author" model="@("Author Name")" />
 </div>
