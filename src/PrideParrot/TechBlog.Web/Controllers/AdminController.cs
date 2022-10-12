@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using TechBlog.Core.DTO;
 using TechBlog.Core.Entities;
 using TechBlog.Services.Blogs;
+using TechBlog.Services.Media;
 using TechBlog.Services.Security;
 using TechBlog.Web.Extensions;
 using TechBlog.Web.Models;
@@ -18,17 +19,20 @@ public class AdminController : Controller
 	private readonly IAuthProvider _authProvider;
 	private readonly IBlogRepository _blogRepository;
 	private readonly ICaptchaProvider _captchaProvider;
+	private readonly IMediaManager _mediaManager;
 	private readonly IMapper _mapper;
 
 	public AdminController(
 		IAuthProvider authProvider, 
 		IBlogRepository blogRepository, 
 		ICaptchaProvider captchaProvider, 
+		IMediaManager mediaManager, 
 		IMapper mapper)
 	{
 		_authProvider = authProvider;
 		_blogRepository = blogRepository;
 		_captchaProvider = captchaProvider;
+		_mediaManager = mediaManager;
 		_mapper = mapper;
 	}
 
@@ -136,7 +140,12 @@ public class AdminController : Controller
 	{
 		var post = model.Id > 0 ? await _blogRepository.GetPostByIdAsync(model.Id) : null;
 
-		if (await _blogRepository.IsPostSlugExistedAsync(model.UrlSlug) &&
+		if (string.IsNullOrWhiteSpace(post?.ImageUrl) && (model.ImageFile == null || model.ImageFile.Length == 0))
+		{
+			ModelState.AddModelError("ImageFile", $"You must ");
+		}
+
+		if (await _blogRepository.IsPostSlugExistedAsync(model.Id, model.UrlSlug) &&
 		    (post == null || post.UrlSlug != model.UrlSlug))
 		{
 			ModelState.AddModelError("UrlSlug", $"Slug '{model.UrlSlug}' is already in use");
@@ -163,6 +172,20 @@ public class AdminController : Controller
 			post.ModifiedDate = DateTime.Now;
 		}
 
+		// Set or replace the image url
+		if (model.ImageFile?.Length > 0)
+		{
+			if (!string.IsNullOrWhiteSpace(post.ImageUrl))
+			{
+				await _mediaManager.DeleteFileAsync(post.ImageUrl);
+			}
+
+			post.ImageUrl = await _mediaManager.SaveFileAsync(
+				model.ImageFile.OpenReadStream(),
+				model.ImageFile.FileName,
+				model.ImageFile.ContentType);
+		}
+
 		var tags = model.SelectedTags.Split(
 			new[] {'\r', '\n', '\t', ',', ';'}, 
 			StringSplitOptions.RemoveEmptyEntries);
@@ -175,9 +198,9 @@ public class AdminController : Controller
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> VerifyPostSlug(string urlSlug)
+	public async Task<IActionResult> VerifyPostSlug(int id, string urlSlug)
 	{
-		var slugExisted = await _blogRepository.IsPostSlugExistedAsync(urlSlug);
+		var slugExisted = await _blogRepository.IsPostSlugExistedAsync(id, urlSlug);
 
 		return slugExisted
 			? Json($"Slug '{urlSlug}' is already in use")

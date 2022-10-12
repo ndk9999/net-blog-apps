@@ -1,14 +1,20 @@
 ﻿@model Post
 
+@{
+	var imageUrl = string.IsNullOrWhiteSpace(Model.ImageUrl)
+		? $"/images/image_{Model.Id % 10 + 1}.jpg"
+		: $"/{Model.ImageUrl}";
+}
+
 <div class="pt-md-4">
 	<h1 class="mb-3">
 		@Model.Title
 	</h1>
-	
+
 	<div class="meta-wrap">
 		<p class="meta">
 			<span>
-				<i class="icon-calendar mr-2"></i> 
+				<i class="icon-calendar mr-2"></i>
 				@Model.PostedDate.ToString("g")
 			</span>
 			<span class="ml-3">
@@ -24,7 +30,7 @@
 			<div class="tagcloud">
 				Tags:
 
-				<partial name="_TagList" model="Model.Tags"/>
+				<partial name="_TagList" model="Model.Tags" />
 			</div>
 		</p>
 	</div>
@@ -32,11 +38,11 @@
 	<p>
 		@Html.Raw(Model.ShortDescription)
 	</p>
-	
+
 	<p>
-		<img src="/images/image_1.jpg" alt="" class="img-fluid">
+		<img src="@imageUrl" alt="" class="img-fluid">
 	</p>
-	
+
 	<p>
 		@Html.Raw(Model.Description)
 	</p>
@@ -46,6 +52,6 @@
 			<partial name="_TagList" model="Model.Tags" />
 		</div>
 	</div>
-	
+
 	<partial name="_Author" model="@("Author Name")" />
 </div>

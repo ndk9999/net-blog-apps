@@ -7,6 +7,10 @@
 	
 	@foreach (var post in Model)
 	{
+		var imageUrl = string.IsNullOrWhiteSpace(post.ImageUrl)
+			? $"/images/image_{post.Id % 10 + 1}.jpg"
+			: $"/{post.ImageUrl}";
+
 		<div class="block-21 mb-4 d-flex">
 			<a asp-controller="Blog"
 			   asp-action="Post"
@@ -16,7 +20,7 @@
 			   asp-route-slug="@post.UrlSlug"
 			   title="@post.Title"
 			   class="blog-img mr-4"
-			   style="background-image: url(/images/image_@(post.Id % 10 + 1).jpg);">
+			   style="background-image: url(@imageUrl);">
 			</a>
 
 			<div class="text">

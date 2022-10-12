@@ -3,6 +3,7 @@ using FluentEmail.Core.Interfaces;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -12,6 +13,7 @@ using TechBlog.Data.Contexts;
 using TechBlog.Data.Seeders;
 using TechBlog.Services.Blogs;
 using TechBlog.Services.IdentityStores;
+using TechBlog.Services.Media;
 using TechBlog.Services.Security;
 using TechBlog.Web.Mapsters;
 using static TechBlog.Core.Constants.Default;
@@ -41,12 +43,20 @@ public static class WebApplicationExtensions
 		builder.Services.AddScoped<IBlogRepository, BlogRepository>();
 		builder.Services.AddScoped<IAuthProvider, AuthProvider>();
 		builder.Services.AddScoped<ICaptchaProvider, GoogleRecaptchaProvider>();
+		builder.Services.AddScoped<IMediaManager, LocalFileSystemMediaManager>();
 
 		return builder;
 	}
 
 	public static WebApplicationBuilder ConfigureAppSettings(this WebApplicationBuilder builder)
 	{
+		// Configure maximum upload file size
+		builder.Services.Configure<FormOptions>(options =>
+		{
+			options.BufferBodyLengthLimit = 1024 * 1024; // 1MB
+			options.MultipartBodyLengthLimit = 10 * 1024 * 1024; // 10 MB
+		});
+
 		builder.Services.Configure<RecaptchaSettings>(
 			builder.Configuration.GetSection(RecaptchaSettings.ConfigSectionName));
 

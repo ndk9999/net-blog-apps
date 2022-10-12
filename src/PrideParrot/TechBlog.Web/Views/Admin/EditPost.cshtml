@@ -12,7 +12,8 @@
 </div>
 
 <form asp-controller="Admin"
-	  asp-action="EditPost"
+      asp-action="EditPost"
+	  enctype="multipart/form-data"
 	  method="post"
 	  novalidate>
 
@@ -55,6 +56,28 @@
 		<label asp-for="UrlSlug" class="font-weight-bold"></label>
 		<input asp-for="UrlSlug" class="form-control" placeholder="Url slug" />
 		<span asp-validation-for="UrlSlug" class="invalid-feedback"></span>
+	</div>
+
+	<div class="form-group">
+		<label asp-for="ImageFile" class="font-weight-bold"></label>
+		<input asp-for="ImageFile" type="file" class="form-control" placeholder="Select image for post" accept="image/*" />
+		<span asp-validation-for="ImageFile" class="invalid-feedback"></span>
+	</div>
+	
+	<div class="form-group">
+		@if (string.IsNullOrWhiteSpace(Model.ImageUrl))
+		{
+			<p class="text-danger">
+				This post has not had an image yet.
+			</p>
+		}
+		else
+		{
+			<p class="text-success">
+				This post already had an image: 
+				<a href="/@Model.ImageUrl" target="_blank" title="Open in new tab">@Model.ImageUrl</a>
+			</p>
+		}
 	</div>
 
 	<div class="form-group">

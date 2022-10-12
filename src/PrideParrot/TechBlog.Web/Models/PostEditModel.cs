@@ -25,8 +25,13 @@ public class PostEditModel
 
 	[Required, DisplayName("Slug")]
 	[StringLength(1000, ErrorMessage = "Meta: UrlSlug should not exceed 50 characters")]
-	[Remote("VerifyPostSlug", "Admin", HttpMethod = "POST")]
+	[Remote("VerifyPostSlug", "Admin", HttpMethod = "POST", AdditionalFields = "Id")]
 	public string UrlSlug { get; set; }
+
+	[DisplayName("Select Image")]
+	public IFormFile ImageFile { get; set; }
+
+	public string ImageUrl { get; set; }
 
 	[DisplayName("Publish this post")]
 	public bool Published { get; set; }

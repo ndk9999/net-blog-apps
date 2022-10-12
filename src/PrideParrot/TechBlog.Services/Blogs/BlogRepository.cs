@@ -308,10 +308,10 @@ public class BlogRepository : IBlogRepository
 	}
 
 	public async Task<bool> IsPostSlugExistedAsync(
-		string slug, CancellationToken cancellationToken = default)
+		int postId, string slug, CancellationToken cancellationToken = default)
 	{
 		return await _context.Set<Post>()
-			.AnyAsync(x => x.UrlSlug == slug, cancellationToken);
+			.AnyAsync(x => x.Id != postId && x.UrlSlug == slug, cancellationToken);
 	}
 
 	public async Task IncreaseViewCountAsync(

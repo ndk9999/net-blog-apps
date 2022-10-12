@@ -23,7 +23,8 @@ public class MapsterConfiguration : IRegister
 		config.NewConfig<Post, PostEditModel>()
 			.Map(dest => dest.SelectedTags, src => string.Join("\r\n", src.Tags.Select(x => x.Name)))
 			.Ignore(dest => dest.CategoryList)
-			.Ignore(dest => dest.TagList);
+			.Ignore(dest => dest.TagList)
+			.Ignore(dest => dest.ImageFile);
 
 		config.NewConfig<CategoryEditModel, Category>()
 			.Ignore(dest => dest.Id);

@@ -1,5 +1,11 @@
 ﻿@model Post
 
+@{
+	var imageUrl = string.IsNullOrWhiteSpace(Model.ImageUrl)
+		? $"/images/image_{Model.Id % 10 + 1}.jpg"
+		: $"/{Model.ImageUrl}";
+}
+
 <article class="blog-entry ftco-animate d-md-flex">
 	<a asp-controller="Blog"
 	   asp-action="Post"
@@ -9,7 +15,7 @@
 	   asp-route-slug="@Model.UrlSlug"
 	   title="@Model.Title"
 	   class="img img-2" 
-	   style="background-image: url(/images/image_@(Model.Id % 10 + 1).jpg);"></a>
+	   style="background-image: url(@imageUrl);"></a>
 
 	<div class="text text-2 pl-md-4">
 		<h3 class="mb-2">

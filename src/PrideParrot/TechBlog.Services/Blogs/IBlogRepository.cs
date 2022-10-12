@@ -93,7 +93,7 @@ public interface IBlogRepository
 		CancellationToken cancellationToken = default);
 
 	Task<bool> IsPostSlugExistedAsync(
-		string slug, 
+		int postId, string slug, 
 		CancellationToken cancellationToken = default);
 
 	Task IncreaseViewCountAsync(

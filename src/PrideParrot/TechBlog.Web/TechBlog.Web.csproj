@@ -39,6 +39,10 @@
 	<ItemGroup>
 	  <Folder Include="Mapsters\" />
 	  <Folder Include="wwwroot\lib\slugify\" />
+	  <Folder Include="wwwroot\uploads\documents\" />
+	  <Folder Include="wwwroot\uploads\others\" />
+	  <Folder Include="wwwroot\uploads\videos\" />
+	  <Folder Include="wwwroot\uploads\pictures\" />
 	</ItemGroup>
 
 	<ItemGroup>
