@@ -1,6 +1,4 @@
-﻿using TechBlog.Core.Entities;
-
-namespace TechBlog.Core.DTO;
+﻿namespace TechBlog.Core.DTO;
 
 public class PostItem
 {

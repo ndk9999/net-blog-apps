@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using Microsoft.EntityFrameworkCore;
 using TechBlog.Core.Contracts;
 
 namespace TechBlog.Core.Collections;

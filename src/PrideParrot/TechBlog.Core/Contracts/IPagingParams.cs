@@ -1,6 +1,4 @@
-﻿using System.Xml.Linq;
-
-namespace TechBlog.Core.Contracts;
+﻿namespace TechBlog.Core.Contracts;
 
 public interface IPagingParams
 {
