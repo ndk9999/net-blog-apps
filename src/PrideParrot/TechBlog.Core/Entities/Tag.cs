@@ -1,6 +1,8 @@
-﻿namespace TechBlog.Core.Entities;
+﻿using TechBlog.Core.Contracts;
 
-public class Tag
+namespace TechBlog.Core.Entities;
+
+public class Tag : IEntity
 {
 	public int Id { get; set; }
 

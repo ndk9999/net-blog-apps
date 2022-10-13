@@ -1,6 +1,8 @@
-﻿namespace TechBlog.Core.Entities;
+﻿using TechBlog.Core.Contracts;
 
-public class Category
+namespace TechBlog.Core.Entities;
+
+public class Category : IEntity
 {
 	public int Id { get; set; }
 
