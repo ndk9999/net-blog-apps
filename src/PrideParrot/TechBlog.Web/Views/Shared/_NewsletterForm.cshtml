@@ -1,4 +1,4 @@
-﻿@model SubscribeFormModel
+﻿@model SubscribeModel
 
 <div class="sidebar-box subs-wrap img py-4" 
      style="background-image: url(/images/bg_1.jpg);">
@@ -12,10 +12,7 @@
 		Far far away, behind the word mountains, far from the countries Vokalia
 	</p>
 	
-	<form asp-controller="Home" 
-	      asp-action="Subscribe" 
-		  method="post"
-	      class="subscribe-form">
+	<form method="post" class="newsletter-form subscribe-form">
 		<div class="form-group">
 			<input type="text" 
 			       id="email-address"

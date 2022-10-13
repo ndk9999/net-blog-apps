@@ -15,4 +15,10 @@ public sealed partial class Default
 		public const string Smtp = "smtp";
 		public const string SendGrid = "sendgrid";
 	}
+
+	public sealed class EmailTemplates
+	{
+		public const string ContactUs = "contact-us.html";
+		public const string WelcomeSubscriber = "welcome-subscriber.html";
+	}
 }

@@ -40,6 +40,11 @@ public static class RouteExtensions
 			defaults: new { controller = "Home", action = "Subscribe" });
 
 		endpoints.MapControllerRoute(
+			name: "unsubscribe",
+			pattern: "unsubscribe",
+			defaults: new { controller = "Home", action = "Unsubscribe" });
+
+		endpoints.MapControllerRoute(
 			name: "rss-feed",
 			pattern: "rss",
 			defaults: new { controller = "Home", action = "Rss" });

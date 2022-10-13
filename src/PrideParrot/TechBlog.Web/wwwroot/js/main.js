@@ -232,7 +232,18 @@ AOS.init({
 		fixedContentPos: false
 	});
 
+	// Handle newsletter form submit event
+	$('form.newsletter-form').submit(function (e) {
+		e.preventDefault();
 
+		var form = $(this), postData = form.serialize();
+		$.post('/subscribe', postData, function (response) {
+			alert(response.success ? 'Thank you for subscribing to TechBlog' : response.messages.join());
+			form.find('input.form-control').val('');
+		});
+
+		return false;
+	});
 
 
 })(jQuery);

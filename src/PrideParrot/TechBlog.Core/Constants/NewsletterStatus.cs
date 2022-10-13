@@ -3,7 +3,5 @@
 public enum NewsletterStatus
 {
 	Pending = 10,
-	Sending = 20,
-	Sent = 30,
-	Error = 40
+	Sent = 20
 }

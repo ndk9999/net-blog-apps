@@ -1,4 +1,4 @@
-﻿@model SubscribeFormModel
+﻿@model SubscribeModel
 
 	<h1 id="colorlib-logo" class="mb-4">
 		<a href="/" style="background-image: url(/images/bg_1.jpg);">
@@ -9,11 +9,8 @@
 	<div class="mb-4">
 		<h3>Subscribe for newsletter</h3>
 
-		<form asp-action="Subscribe"
-		      asp-controller="Home"
-		      method="post"
-		      class="colorlib-subscribe-form">
-
+		<form method="post" 
+		      class="newsletter-form colorlib-subscribe-form">
 			<div class="form-group d-flex">
 				<div class="icon">
 					<span class="icon-paper-plane"></span>
@@ -24,6 +21,5 @@
 				       asp-for="Email"
 				       placeholder="Enter Email Address">
 			</div>
-
 		</form>
 	</div>

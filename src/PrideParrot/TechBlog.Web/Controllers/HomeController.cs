@@ -9,6 +9,8 @@ using TechBlog.Web.Models;
 using System.IO;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using TechBlog.Core.Constants;
+using TechBlog.Services.Blogs;
 
 namespace TechBlog.Web.Controllers
 {
@@ -19,6 +21,7 @@ namespace TechBlog.Web.Controllers
 		private readonly IFluentEmail _fluentEmail;
 		private readonly IWebHostEnvironment _environment;
 		private readonly IFeedProvider _feedProvider;
+		private readonly INewsletterRepository _newsletterRepository;
 		private readonly MailingSettings _mailingSettings;
 
 		public HomeController(
@@ -26,7 +29,8 @@ namespace TechBlog.Web.Controllers
 			ICaptchaProvider captchaProvider, 
 			IFluentEmail fluentEmail, 
 			IWebHostEnvironment environment, 
-			IFeedProvider feedProvider, 
+			IFeedProvider feedProvider,
+			INewsletterRepository newsletterRepository,
 			IOptions<MailingSettings> mailingSettings)
 		{
 			_logger = logger;
@@ -34,6 +38,7 @@ namespace TechBlog.Web.Controllers
 			_fluentEmail = fluentEmail;
 			_environment = environment;
 			_feedProvider = feedProvider;
+			_newsletterRepository = newsletterRepository;
 			_mailingSettings = mailingSettings.Value;
 		}
 
@@ -65,7 +70,7 @@ namespace TechBlog.Web.Controllers
 			}
 
 			var templatePath = Path.Combine(
-				_environment.WebRootPath, "templates", "emails", "contact-us.html");
+				_environment.WebRootPath, "templates", "emails", Default.EmailTemplates.ContactUs);
 
 			await _fluentEmail
 				.To(_mailingSettings.ReceiverAddress)
@@ -80,8 +85,79 @@ namespace TechBlog.Web.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult Subscribe(SubscribeFormModel model)
+		public async Task<IActionResult> Subscribe(SubscribeModel model)
 		{
+			// Notify invalid email address
+			if (!ModelState.IsValid)
+			{
+				return Json(AjaxResponse.Error(
+					$"You provided invalid email address '{model.Email}'."));
+			}
+
+			// Check and add new subscriber
+			var subscriber = await _newsletterRepository.SubscribeAsync(model.Email);
+
+			// Notify email blocked message
+			if (subscriber.UnsubscribedDate != null && !subscriber.Voluntary)
+			{
+				return Json(AjaxResponse.Error(
+					$"Your email '{model.Email}' is blocked by administrator"));
+			}
+
+			// Send welcome email
+			var templatePath = Path.Combine(
+				_environment.WebRootPath, "templates", "emails", Default.EmailTemplates.WelcomeSubscriber);
+
+			await _fluentEmail
+				.To(model.Email)
+				.Subject("[DO NOT REPLY] Thanks For Subscribing To TechBlog")
+				.UsingTemplateFromFile(templatePath, new
+				{
+					UnsubscribeLink = Url.Action(
+						"Unsubscribe", "Home", new {model.Email}, Request.Scheme)
+				})
+				.SendAsync();
+
+			return Json(AjaxResponse.Ok(model.Email));
+		}
+
+		public async Task<IActionResult> Unsubscribe(string email)
+		{
+			var subscriber = string.IsNullOrWhiteSpace(email)
+				? null
+				: await _newsletterRepository.GetSubscriberByEmailAsync(email);
+
+			var model = new UnsubscribeModel()
+			{
+				Email = email,
+				Message = subscriber == null
+					? $"Your email '{email}' does not exist in our system"
+					: subscriber.UnsubscribedDate != null
+						? "You already unsubscribed from our system"
+						: null
+			};
+
+			return View(model);
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> Unsubscribe(UnsubscribeModel model)
+		{
+			if (!ModelState.IsValid)
+			{
+				return View(model);
+			}
+
+			await _newsletterRepository.UnsubscribeAsync(
+				model.Email, model.Reason, true);
+
+			return RedirectToAction("Unsubscribed", "Home", new {model.Email});
+		}
+
+		[Route("unsubscribed")]
+		public IActionResult Unsubscribed(string email)
+		{
+			ViewBag.EmailAddress = email;
 			return View();
 		}
 

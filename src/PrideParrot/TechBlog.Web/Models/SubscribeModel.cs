@@ -2,7 +2,7 @@
 
 namespace TechBlog.Web.Models;
 
-public class SubscribeFormModel
+public class SubscribeModel
 {
 	[Required, EmailAddress]
 	public string Email { get; set; }
