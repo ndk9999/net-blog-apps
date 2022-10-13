@@ -1,0 +1,50 @@
+﻿Add FluentValidation and Validate Models
+
+-----------------------------------------------------------------------
+Referrences:
+
+	1. https://docs.fluentvalidation.net/en/latest/installation.html
+	2. https://blog.christian-schou.dk/how-to-use-fluentvalidation-in-asp-net-core6/
+	3. https://code-maze.com/fluentvalidation-in-aspnet/
+	4. https://www.youtube.com/watch?v=-ix1hzWr2ws&ab_channel=AmichaiMantinband
+	5. https://www.youtube.com/watch?v=xXjZLNn8I7U&ab_channel=CodingNightNZ
+	6. https://www.youtube.com/watch?v=2JzQuIvxIqk&ab_channel=NickChapsas
+	7. https://www.jerriepelser.com/blog/remote-client-side-validation-with-fluentvalidation/
+
+-----------------------------------------------------------------------
+Install the NuGet Packages
+
+	1. FluentValidation (Optional - it is included in packages below)
+	2. FluentValidation.AspNetCore (For ASP.NET Core projects)
+	3. FluentValidation.DependencyInjectionExtensions (Other project types)
+
+-----------------------------------------------------------------------
+Create folders and files
+
+	1. Create a new folder Validations in project TechBlog.Web
+	2. Create a new folder CustomValidators under the folder Validations
+	3. Create a new class FluentValidationDependencyInjection
+	4. Create classes for specific valiation purposes.
+
+-----------------------------------------------------------------------
+Configure and register FluentValidation
+
+	1. Create extension method ConfigureFluentValidation in the class
+	   FluentValidationDependencyInjection
+	2. Call it from the Main method
+
+-----------------------------------------------------------------------
+Apply manual validation
+	
+	1. Add parameter [FromServices] IValidator<T> validator to the action
+	2. Call one of the two following methods to validate model object
+			var validationResult = validator.Validate(model);
+			var validationResult = await validator.ValidateAsync(model);
+	3. Check the validation result and call the method AddToModelState
+	   to copy errors to ModelState object if any.
+
+-----------------------------------------------------------------------
+
+
+
+-----------------------------------------------------------------------

@@ -125,9 +125,11 @@ public class BlogRepository : IBlogRepository
 	}
 
 	public async Task<bool> IsCategorySlugExistedAsync(
-		string categorySlug, CancellationToken cancellationToken = default)
+		int categoryId, string categorySlug, 
+		CancellationToken cancellationToken = default)
 	{
-		return await _context.Set<Category>().AnyAsync(x => x.UrlSlug == categorySlug);
+		return await _context.Set<Category>()
+			.AnyAsync(x => x.Id != categoryId && x.UrlSlug == categorySlug, cancellationToken);
 	}
 
 	public async Task<bool> DeleteCategoryAsync(

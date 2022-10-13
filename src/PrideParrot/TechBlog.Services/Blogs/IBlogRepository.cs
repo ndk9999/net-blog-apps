@@ -39,7 +39,7 @@ public interface IBlogRepository
 		CancellationToken cancellationToken = default);
 
 	Task<bool> IsCategorySlugExistedAsync(
-		string categorySlug,
+		int categoryId, string categorySlug,
 		CancellationToken cancellationToken = default);
 
 	Task<bool> DeleteCategoryAsync(

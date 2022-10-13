@@ -11423,7 +11423,7 @@ body {
 		}
 
 		body.offcanvas #colorlib-main, body.offcanvas .colorlib-nav-toggle {
-			top: 0;
+			top: 20px;
 			-moz-transform: translateX(270px);
 			-webkit-transform: translateX(270px);
 			-ms-transform: translateX(270px);
@@ -11699,6 +11699,15 @@ h1, h2, h3, h4, h5,
 			transform: translateY(-50%);
 			color: rgba(0, 0, 0, 0.5);
 		}
+
+#colorlib-aside .user-state {
+	margin-left: -2em;
+	margin-right: -2em;
+}
+
+	#colorlib-aside .user-state .btn-group .btn {
+		border-radius: 0;
+	}
 
 #colorlib-main {
 	width: 100%;

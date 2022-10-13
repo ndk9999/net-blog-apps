@@ -133,7 +133,12 @@
 					closeOnEscape: true,
 					processData: 'Saving ...',
 					addCaption: 'Add Category',
-					url: '@Url.Action("EditCategory", "Admin")'
+					url: '@Url.Action("EditCategory", "Admin")',
+					afterSubmit: function (response, postData) {
+						var result = JSON.parse(response.responseText);
+						console.log(result.message);
+						return [result.success, result.message, result.success ? result.id : null];
+					}
 				}, // Add options
 				{
 					width: 500,

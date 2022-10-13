@@ -9,22 +9,19 @@ public class PostEditModel
 {
 	public int Id { get; set; }
 
-	[Required, DisplayName("Post Title")]
-	[StringLength(500, ErrorMessage = "Title: Length should not exceed 500 characters")]
+	[DisplayName("Post Title")]
 	public string Title { get; set; }
 
-	[Required, DisplayName("Introduction")]
+	[DisplayName("Introduction")]
 	public string ShortDescription { get; set; }
 
-	[Required, DisplayName("Main Content")]
+	[DisplayName("Main Content")]
 	public string Description { get; set; }
 
-	[Required, DisplayName("Metadata")]
-	[StringLength(1000, ErrorMessage = "Meta: Length should not exceed 1000 characters")]
+	[DisplayName("Metadata")]
 	public string Meta { get; set; }
 
-	[Required, DisplayName("Slug")]
-	[StringLength(1000, ErrorMessage = "Meta: UrlSlug should not exceed 50 characters")]
+	[DisplayName("Slug")]
 	[Remote("VerifyPostSlug", "Admin", HttpMethod = "POST", AdditionalFields = "Id")]
 	public string UrlSlug { get; set; }
 
@@ -36,13 +33,21 @@ public class PostEditModel
 	[DisplayName("Publish this post")]
 	public bool Published { get; set; }
 
-	[Required, DisplayName("Category")]
+	[DisplayName("Category")]
 	public int CategoryId { get; set; }
 
-	[Required, DisplayName("Enter Tags (One tag on a line)")]
+	[DisplayName("Enter Tags (One tag on a line)")]
 	public string SelectedTags { get; set; }
 
 	public IEnumerable<SelectListItem> CategoryList { get; set; }
 
 	public IEnumerable<SelectListItem> TagList { get; set; }
+
+
+	public List<string> GetSelectedTags()
+	{
+		return (SelectedTags ?? "")
+			.Split(new[] { '\r', '\n', '\t', ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+			.ToList();
+	}
 }

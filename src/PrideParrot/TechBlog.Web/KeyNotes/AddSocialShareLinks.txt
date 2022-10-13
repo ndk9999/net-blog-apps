@@ -1,0 +1,14 @@
+﻿Adding Social Share Links
+
+-----------------------------------------------------------------------
+Referrences:
+	1. https://arunendapally.com/post/adding-social-share-links-with-custom-icons-and-share-count
+	2. https://www.c-sharpcorner.com/UploadFile/raj1979/custom-facebook-twitter-share-functionality-in-Asp-Net/
+	3. https://www.c-sharpcorner.com/UploadFile/raj1979/post-on-facebook-users-wall-using-Asp-Net-C-Sharp/
+
+-----------------------------------------------------------------------
+
+
+
+
+-----------------------------------------------------------------------

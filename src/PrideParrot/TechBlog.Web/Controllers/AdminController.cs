@@ -1,4 +1,6 @@
-﻿using Mapster;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -136,19 +138,15 @@ public class AdminController : Controller
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> EditPost(PostEditModel model, string nextAction = "Close")
+	public async Task<IActionResult> EditPost(
+		[FromServices] IValidator<PostEditModel> validator,
+		PostEditModel model, string nextAction = "Close")
 	{
-		var post = model.Id > 0 ? await _blogRepository.GetPostByIdAsync(model.Id) : null;
+		var validationResult = await validator.ValidateAsync(model);
 
-		if (string.IsNullOrWhiteSpace(post?.ImageUrl) && (model.ImageFile == null || model.ImageFile.Length == 0))
+		if (!validationResult.IsValid)
 		{
-			ModelState.AddModelError("ImageFile", $"You must ");
-		}
-
-		if (await _blogRepository.IsPostSlugExistedAsync(model.Id, model.UrlSlug) &&
-		    (post == null || post.UrlSlug != model.UrlSlug))
-		{
-			ModelState.AddModelError("UrlSlug", $"Slug '{model.UrlSlug}' is already in use");
+			validationResult.AddToModelState(ModelState);
 		}
 
 		if (!ModelState.IsValid)
@@ -156,6 +154,8 @@ public class AdminController : Controller
 			await PopulatePostEditModel(model);
 			return View(model);
 		}
+		
+		var post = model.Id > 0 ? await _blogRepository.GetPostByIdAsync(model.Id) : null;
 		
 		if (post == null)
 		{
@@ -175,22 +175,19 @@ public class AdminController : Controller
 		// Set or replace the image url
 		if (model.ImageFile?.Length > 0)
 		{
-			if (!string.IsNullOrWhiteSpace(post.ImageUrl))
-			{
-				await _mediaManager.DeleteFileAsync(post.ImageUrl);
-			}
-
-			post.ImageUrl = await _mediaManager.SaveFileAsync(
+			var newImagePath = await _mediaManager.SaveFileAsync(
 				model.ImageFile.OpenReadStream(),
 				model.ImageFile.FileName,
 				model.ImageFile.ContentType);
-		}
 
-		var tags = model.SelectedTags.Split(
-			new[] {'\r', '\n', '\t', ',', ';'}, 
-			StringSplitOptions.RemoveEmptyEntries);
+			if (!string.IsNullOrWhiteSpace(newImagePath))
+			{
+				await _mediaManager.DeleteFileAsync(post.ImageUrl);
+				post.ImageUrl = newImagePath;
+			}
+		}
 		
-		await _blogRepository.CreateOrUpdatePostAsync(post, tags);
+		await _blogRepository.CreateOrUpdatePostAsync(post, model.GetSelectedTags());
 
 		return nextAction == "Continue"
 			? RedirectToAction("EditPost", new {model.Id})
@@ -258,16 +255,15 @@ public class AdminController : Controller
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> EditCategory(CategoryEditModel model)
+	public async Task<IActionResult> EditCategory(
+		[FromForm] CategoryEditModel model,
+		[FromServices] IValidator<CategoryEditModel> validator)
 	{
-		var category = model.Id > 0
-			? await _blogRepository.GetCategoryByIdAsync(model.Id)
-			: null;
+		var validationResult = await validator.ValidateAsync(model);
 
-		if (await _blogRepository.IsCategorySlugExistedAsync(model.UrlSlug) &&
-		    (category == null || category.UrlSlug != model.UrlSlug))
+		if (!validationResult.IsValid)
 		{
-			ModelState.AddModelError("UrlSlug", $"Slug '{model.UrlSlug}' is already in use");
+			validationResult.AddToModelState(ModelState);
 		}
 
 		if (!ModelState.IsValid)
@@ -276,9 +272,13 @@ public class AdminController : Controller
 			{
 				Id = 0,
 				Success = false,
-				Message = "Invalid category data"
+				Message = $"Invalid category data. {ModelState.GetJoinedErrorMessages()}."
 			});
 		}
+
+		var category = model.Id > 0
+			? await _blogRepository.GetCategoryByIdAsync(model.Id)
+			: null;
 
 		if (category == null)
 		{

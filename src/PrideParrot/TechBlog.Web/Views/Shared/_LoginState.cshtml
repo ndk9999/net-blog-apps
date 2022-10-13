@@ -2,11 +2,11 @@
 
 @if (AuthService.IsLoggedIn)
 {
-	<li>
+	<div class="user-state mb-3">
 		<form asp-controller="Admin"
 			  asp-action="Logout"
 			  method="post">
-			<div class="btn-group">
+			<div class="btn-group btn-block">
 				<button type="button"
 						class="btn btn-success"
 						title="Go to Dashboard"
@@ -19,13 +19,5 @@
 			</div>
 
 		</form>
-	</li>
-}
-else
-{
-	<li>
-		<a asp-controller="Admin" asp-action="Login">
-			Login
-		</a>
-	</li>
+	</div>
 }

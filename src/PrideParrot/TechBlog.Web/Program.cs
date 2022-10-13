@@ -1,4 +1,6 @@
 using TechBlog.Web.Extensions;
+using TechBlog.Web.Mapsters;
+using TechBlog.Web.Validations;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -9,7 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 		.ConfigureAppSettings()
 		.ConfigureIdentity()
 		.ConfigureMapster()
-		.ConfigureFluentEmail();
+		.ConfigureFluentEmail()
+		.ConfigureFluentValidation();
 }
 
 var app = builder.Build();

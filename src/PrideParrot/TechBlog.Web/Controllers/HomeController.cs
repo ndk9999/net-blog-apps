@@ -7,6 +7,8 @@ using TechBlog.Services.Rss;
 using TechBlog.Services.Security;
 using TechBlog.Web.Models;
 using System.IO;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 namespace TechBlog.Web.Controllers
 {
@@ -47,11 +49,14 @@ namespace TechBlog.Web.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Contact(ContactFormModel model)
+		public async Task<IActionResult> Contact(ContactFormModel model,
+			[FromServices] IValidator<ContactFormModel> validator)
 		{
-			if (!await _captchaProvider.VerifyAsync(model))
+			var validationResult = await validator.ValidateAsync(model);
+
+			if (!validationResult.IsValid)
 			{
-				ModelState.AddModelError("", "Invalid captcha token");
+				validationResult.AddToModelState(ModelState);
 			}
 
 			if (!ModelState.IsValid)

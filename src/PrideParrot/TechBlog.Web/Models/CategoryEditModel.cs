@@ -7,13 +7,12 @@ public class CategoryEditModel
 {
 	public int Id { get; set; }
 
-	[Required, DisplayName("Category Name"), MaxLength(50)]
+	[DisplayName("Category Name")]
 	public string Name { get; set; }
 
-	[Required, DisplayName("Slug"), MaxLength(50)]
+	[DisplayName("Slug")]
 	public string UrlSlug { get; set; }
 
-	[MaxLength(500)]
 	public string Description { get; set; }
 
 	public bool ShowOnMenu { get; set; }

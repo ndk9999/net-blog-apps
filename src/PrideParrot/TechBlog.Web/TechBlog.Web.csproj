@@ -10,6 +10,7 @@
 	<ItemGroup>
 	  <PackageReference Include="FluentEmail.SendGrid" Version="3.0.2" />
 	  <PackageReference Include="FluentEmail.Smtp" Version="3.0.2" />
+	  <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
 	  <PackageReference Include="Mapster.DependencyInjection" Version="1.0.0" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.9">
 	    <PrivateAssets>all</PrivateAssets>
@@ -22,6 +23,10 @@
 		<ProjectReference Include="..\TechBlog.Core\TechBlog.Core.csproj" />
 		<ProjectReference Include="..\TechBlog.Data\TechBlog.Data.csproj" />
 		<ProjectReference Include="..\TechBlog.Services\TechBlog.Services.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Validations\CustomValidators\" />
 	</ItemGroup>
 
 </Project>
