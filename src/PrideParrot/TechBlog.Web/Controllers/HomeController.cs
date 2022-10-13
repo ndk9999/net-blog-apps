@@ -11,6 +11,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using TechBlog.Core.Constants;
 using TechBlog.Services.Blogs;
+using TechBlog.Web.Extensions;
 
 namespace TechBlog.Web.Controllers
 {
@@ -21,7 +22,7 @@ namespace TechBlog.Web.Controllers
 		private readonly IFluentEmail _fluentEmail;
 		private readonly IWebHostEnvironment _environment;
 		private readonly IFeedProvider _feedProvider;
-		private readonly INewsletterRepository _newsletterRepository;
+		private readonly ISubscriberRepository _subscriberRepository;
 		private readonly MailingSettings _mailingSettings;
 
 		public HomeController(
@@ -30,7 +31,7 @@ namespace TechBlog.Web.Controllers
 			IFluentEmail fluentEmail, 
 			IWebHostEnvironment environment, 
 			IFeedProvider feedProvider,
-			INewsletterRepository newsletterRepository,
+			ISubscriberRepository subscriberRepository,
 			IOptions<MailingSettings> mailingSettings)
 		{
 			_logger = logger;
@@ -38,7 +39,7 @@ namespace TechBlog.Web.Controllers
 			_fluentEmail = fluentEmail;
 			_environment = environment;
 			_feedProvider = feedProvider;
-			_newsletterRepository = newsletterRepository;
+			_subscriberRepository = subscriberRepository;
 			_mailingSettings = mailingSettings.Value;
 		}
 
@@ -69,8 +70,7 @@ namespace TechBlog.Web.Controllers
 				return View(model);
 			}
 
-			var templatePath = Path.Combine(
-				_environment.WebRootPath, "templates", "emails", Default.EmailTemplates.ContactUs);
+			var templatePath = _environment.GetEmailTemplateFullPath(Default.EmailTemplates.ContactUs);
 
 			await _fluentEmail
 				.To(_mailingSettings.ReceiverAddress)
@@ -95,7 +95,7 @@ namespace TechBlog.Web.Controllers
 			}
 
 			// Check and add new subscriber
-			var subscriber = await _newsletterRepository.SubscribeAsync(model.Email);
+			var subscriber = await _subscriberRepository.SubscribeAsync(model.Email);
 
 			// Notify email blocked message
 			if (subscriber.UnsubscribedDate != null && !subscriber.Voluntary)
@@ -105,8 +105,7 @@ namespace TechBlog.Web.Controllers
 			}
 
 			// Send welcome email
-			var templatePath = Path.Combine(
-				_environment.WebRootPath, "templates", "emails", Default.EmailTemplates.WelcomeSubscriber);
+			var templatePath = _environment.GetEmailTemplateFullPath(Default.EmailTemplates.WelcomeSubscriber);
 
 			await _fluentEmail
 				.To(model.Email)
@@ -125,7 +124,7 @@ namespace TechBlog.Web.Controllers
 		{
 			var subscriber = string.IsNullOrWhiteSpace(email)
 				? null
-				: await _newsletterRepository.GetSubscriberByEmailAsync(email);
+				: await _subscriberRepository.GetSubscriberByEmailAsync(email);
 
 			var model = new UnsubscribeModel()
 			{
@@ -148,7 +147,7 @@ namespace TechBlog.Web.Controllers
 				return View(model);
 			}
 
-			await _newsletterRepository.UnsubscribeAsync(
+			await _subscriberRepository.UnsubscribeAsync(
 				model.Email, model.Reason, true);
 
 			return RedirectToAction("Unsubscribed", "Home", new {model.Email});

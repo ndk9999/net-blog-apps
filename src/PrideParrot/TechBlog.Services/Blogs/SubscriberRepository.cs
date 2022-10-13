@@ -1,16 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TechBlog.Core.Constants;
-using TechBlog.Core.DTO;
+using TechBlog.Core.Contracts;
 using TechBlog.Core.Entities;
 using TechBlog.Data.Contexts;
+using TechBlog.Services.Extensions;
 
 namespace TechBlog.Services.Blogs;
 
-public class NewsletterRepository : INewsletterRepository
+public class SubscriberRepository : ISubscriberRepository
 {
 	private readonly BlogDbContext _context;
 
-	public NewsletterRepository(BlogDbContext context)
+	public SubscriberRepository(BlogDbContext context)
 	{
 		_context = context;
 	}
@@ -35,6 +35,7 @@ public class NewsletterRepository : INewsletterRepository
 			subscriber.Notes = $"Subscribe again for newsletter on {DateTime.Now}";
 
 			await _context.SaveChangesAsync(cancellationToken);
+			return subscriber;
 		}
 
 		subscriber = new Subscriber()
@@ -80,68 +81,17 @@ public class NewsletterRepository : INewsletterRepository
 			.FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
 	}
 
-	public async Task<IList<int>> GetNewsletterReceiversAsync(
-		int numberOfSubscribers,
+	public async Task<IPagedList<Subscriber>> GetNewsletterReceiversAsync(
+		int pageNumber,
+		int pageSize,
 		CancellationToken cancellationToken = default)
 	{
-		return await _context.Set<Newsletter>()
-			.Where(x => x.Status == NewsletterStatus.Pending)
-			.Select(x => x.SubscriberId)
-			.Distinct()
-			.Take(numberOfSubscribers)
-			.ToListAsync(cancellationToken);
-	}
-
-	public async Task<IList<PostItem>> GetNewPostsForSubscriberAsync(
-		int subscriberId,
-		CancellationToken cancellationToken = default)
-	{
-		return await _context.Set<Newsletter>()
-			.Where(x => x.SubscriberId == subscriberId && 
-			            x.Status == NewsletterStatus.Pending)
-			.Select(x => new PostItem()
-			{
-				Id = x.Post.Id,
-				Title = x.Post.Title,
-				ShortDescription = x.Post.ShortDescription,
-				UrlSlug = x.Post.UrlSlug,
-				ImageUrl = x.Post.ImageUrl,
-				PostedDate = x.Post.PostedDate
-			})
-			.OrderBy(x => x.PostedDate)
-			.ToListAsync(cancellationToken);
-	}
-
-	public async Task MarkNewslettersAsSentAsync(
-		int subscriberId,
-		IEnumerable<int> postIdList,
-		CancellationToken cancellationToken = default)
-	{
-		var notes = $"Sent on {DateTime.Now:dd/MM/yyyy HH:mm:ss}";
-
-		await _context.Set<Newsletter>()
-			.Where(x => postIdList.Contains(x.PostId) && x.SubscriberId == subscriberId)
-			.UpdateFromQueryAsync(x => new Newsletter()
-			{
-				Status = NewsletterStatus.Sent,
-				Notes = notes
-			}, cancellationToken);
-	}
-
-	public async Task DeleteSentNewslettersAsync(
-		int? subscriberId,
-		int? postId,
-		CancellationToken cancellationToken = default)
-	{
-		var deleteQuery = _context.Set<Newsletter>()
-			.Where(x => x.Status == NewsletterStatus.Sent);
-
-		if (subscriberId > 0)
-			deleteQuery = deleteQuery.Where(x => x.SubscriberId == subscriberId);
-
-		if (postId > 0)
-			deleteQuery = deleteQuery.Where(x => x.PostId == postId);
-
-		await deleteQuery.DeleteFromQueryAsync(cancellationToken);
+		return await _context.Set<Subscriber>()
+			.Where(x => x.UnsubscribedDate == null)
+			.ToPagedListAsync(
+				pageNumber, 
+				pageSize, 
+				sortOrder: "ASC",
+				cancellationToken: cancellationToken);
 	}
 }

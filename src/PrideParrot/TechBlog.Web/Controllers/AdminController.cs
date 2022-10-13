@@ -22,6 +22,7 @@ public class AdminController : Controller
 	private readonly IBlogRepository _blogRepository;
 	private readonly ICaptchaProvider _captchaProvider;
 	private readonly IMediaManager _mediaManager;
+	private readonly INewsletterQueue _newsletterQueue;
 	private readonly IMapper _mapper;
 
 	public AdminController(
@@ -29,12 +30,14 @@ public class AdminController : Controller
 		IBlogRepository blogRepository, 
 		ICaptchaProvider captchaProvider, 
 		IMediaManager mediaManager, 
+		INewsletterQueue newsletterQueue, 
 		IMapper mapper)
 	{
 		_authProvider = authProvider;
 		_blogRepository = blogRepository;
 		_captchaProvider = captchaProvider;
 		_mediaManager = mediaManager;
+		_newsletterQueue = newsletterQueue;
 		_mapper = mapper;
 	}
 
@@ -156,9 +159,11 @@ public class AdminController : Controller
 		}
 		
 		var post = model.Id > 0 ? await _blogRepository.GetPostByIdAsync(model.Id) : null;
+		var isNewPost = false;
 		
 		if (post == null)
 		{
+			isNewPost = true;
 			post = _mapper.Map<Post>(model);
 
 			post.Id = 0;
@@ -188,6 +193,12 @@ public class AdminController : Controller
 		}
 		
 		await _blogRepository.CreateOrUpdatePostAsync(post, model.GetSelectedTags());
+
+		// Enqueue newsletter
+		if (isNewPost && post.Published)
+		{
+			_newsletterQueue.Enqueue(post);
+		}
 
 		return nextAction == "Continue"
 			? RedirectToAction("EditPost", new {model.Id})

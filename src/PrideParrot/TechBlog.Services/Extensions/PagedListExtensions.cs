@@ -21,4 +21,22 @@ public static class PagedListExtensions
 
 		return new PagedList<T>(items, pagingParams.PageNumber, pagingParams.PageSize, totalCount);
 	}
+
+	public static async Task<PagedList<T>> ToPagedListAsync<T>(
+		this IQueryable<T> source,
+		int pageNumber,
+		int pageSize,
+		string sortColumn = "Id",
+		string sortOrder = "DESC",
+		CancellationToken cancellationToken = default)
+	{
+		var totalCount = await source.CountAsync(cancellationToken);
+		var items = await source
+			.OrderBy($"{sortColumn} {sortOrder}")
+			.Skip((pageNumber - 1) * pageSize)
+			.Take(pageSize)
+			.ToListAsync(cancellationToken);
+
+		return new PagedList<T>(items, pageNumber, pageSize, totalCount);
+	}
 }

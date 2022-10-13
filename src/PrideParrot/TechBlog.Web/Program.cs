@@ -1,3 +1,4 @@
+using TechBlog.Web.BackgroundTasks;
 using TechBlog.Web.Extensions;
 using TechBlog.Web.Mapsters;
 using TechBlog.Web.Validations;
@@ -8,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 	builder
 		.ConfigureMvc()
 		.ConfigureServices()
+		.ConfigureBackgroundTasks()
 		.ConfigureAppSettings()
 		.ConfigureIdentity()
 		.ConfigureMapster()

@@ -157,6 +157,12 @@
 				$("#grid").trigger("reloadGrid");
 				return false;
 			});
+
+			$('#btnClearFilter').click(function () {
+				$(this).closest('form')
+					.find('.form-control').val('').end()
+					.find('input.form-check-input').prop('checked', false).end();
+			});
 		});
 	</script>
 }

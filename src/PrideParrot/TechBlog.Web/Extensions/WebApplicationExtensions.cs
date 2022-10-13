@@ -42,7 +42,7 @@ public static class WebApplicationExtensions
 
 		builder.Services.AddScoped<IDataSeeder, DataSeeder>();
 		builder.Services.AddScoped<IBlogRepository, BlogRepository>();
-		builder.Services.AddScoped<INewsletterRepository, NewsletterRepository>();
+		builder.Services.AddScoped<ISubscriberRepository, SubscriberRepository>();
 		builder.Services.AddScoped<IAuthProvider, AuthProvider>();
 		builder.Services.AddScoped<ICaptchaProvider, GoogleRecaptchaProvider>();
 		builder.Services.AddScoped<IMediaManager, LocalFileSystemMediaManager>();

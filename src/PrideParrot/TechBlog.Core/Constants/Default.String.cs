@@ -20,5 +20,6 @@ public sealed partial class Default
 	{
 		public const string ContactUs = "contact-us.html";
 		public const string WelcomeSubscriber = "welcome-subscriber.html";
+		public const string Newsletter = "newsletter.html";
 	}
 }
