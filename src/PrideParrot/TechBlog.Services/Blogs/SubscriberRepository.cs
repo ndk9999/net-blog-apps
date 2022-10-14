@@ -81,6 +81,44 @@ public class SubscriberRepository : ISubscriberRepository
 			.FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
 	}
 
+	public async Task<Subscriber> GetSubscriberByIdAsync(
+		int subscriberId,
+		CancellationToken cancellationToken = default)
+	{
+		return await _context.Set<Subscriber>()
+			.FirstOrDefaultAsync(x => x.Id == subscriberId, cancellationToken);
+	}
+
+	public async Task<bool> BlockSubscriberAsync(
+		int subscriberId,
+		string reason,
+		string notes,
+		bool involuntary = false,
+		CancellationToken cancellationToken = default)
+	{
+		var subscriber = await GetSubscriberByIdAsync(subscriberId, cancellationToken);
+
+		if (subscriber == null) return false;
+
+		subscriber.UnsubscribedDate ??= DateTime.Now;
+		subscriber.UnsubscribedReason = reason;
+		subscriber.Notes = notes;
+		subscriber.Voluntary = !involuntary;
+
+		await _context.SaveChangesAsync(cancellationToken);
+
+		return true;
+	}
+
+	public async Task<bool> DeleteSubscriberAsync(
+		int subscriberId,
+		CancellationToken cancellationToken = default)
+	{
+		return await _context.Set<Subscriber>()
+			.Where(x => x.Id == subscriberId)
+			.DeleteFromQueryAsync(cancellationToken) > 0;
+	}
+
 	public async Task<IPagedList<Subscriber>> GetNewsletterReceiversAsync(
 		int pageNumber,
 		int pageSize,
@@ -93,5 +131,33 @@ public class SubscriberRepository : ISubscriberRepository
 				pageSize, 
 				sortOrder: "ASC",
 				cancellationToken: cancellationToken);
+	}
+
+	public async Task<IPagedList<Subscriber>> SearchSubscribersAsync(
+		IPagingParams pagingParams,
+		string keyword = null,
+		bool unsubscribed = false,
+		bool involuntary = false,
+		CancellationToken cancellationToken = default)
+	{
+		IQueryable<Subscriber> subscriberQuery = _context.Set<Subscriber>();
+
+		if (!string.IsNullOrWhiteSpace(keyword))
+		{
+			subscriberQuery = subscriberQuery.Where(x =>
+				x.Email.Contains(keyword) || x.Notes.Contains(keyword) || x.UnsubscribedReason.Contains(keyword));
+		}
+
+		if (involuntary)
+		{
+			subscriberQuery = subscriberQuery.Where(x =>
+				!x.Voluntary && x.UnsubscribedDate != null);
+		}
+		else if (unsubscribed)
+		{
+			subscriberQuery = subscriberQuery.Where(x => x.UnsubscribedDate != null);
+		}
+
+		return await subscriberQuery.ToPagedListAsync(pagingParams, cancellationToken);
 	}
 }

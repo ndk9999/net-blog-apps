@@ -26,6 +26,7 @@ public static class WebApplicationExtensions
 	public static WebApplicationBuilder ConfigureMvc(this WebApplicationBuilder builder)
 	{
 		builder.Services.AddControllersWithViews();
+		builder.Services.AddRazorPages();
 		builder.Services.AddResponseCompression();
 		builder.Services.AddMemoryCache();
 

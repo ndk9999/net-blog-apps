@@ -1,0 +1,47 @@
+﻿@page "/manage/subscribers/block/{id:int}"
+@model BlockModel
+
+@{
+	ViewData["PageTitle"] = "Manage Subscribers";
+}
+
+<div class="mb-4">
+	<h2 class="h3">
+		Block Subscriber
+	</h2>
+</div>
+
+<form method="POST">
+	<input asp-for="BanModel.Id" type="hidden" />
+
+	<div asp-validation-summary="All" class="text-danger"></div>
+
+	<div class="form-group">
+		<label asp-for="BanModel.Email"></label>
+		<input asp-for="BanModel.Email" class="form-control" readonly="readonly" />
+		<span asp-validation-for="BanModel.Email" class="invalid-feedback"></span>
+	</div>
+
+	<div class="form-group">
+		<label asp-for="BanModel.BlockedReason"></label>
+		<input asp-for="BanModel.BlockedReason" class="form-control" />
+		<span asp-validation-for="BanModel.BlockedReason" class="invalid-feedback"></span>
+	</div>
+
+	<div class="form-group">
+		<label asp-for="BanModel.Notes"></label>
+		<input asp-for="BanModel.Notes" class="form-control" />
+		<span asp-validation-for="BanModel.Notes" class="invalid-feedback"></span>
+	</div>
+
+	<div class="form-group">
+		<input type="checkbox" asp-for="BanModel.Involuntary" />
+		<label asp-for="BanModel.Involuntary" class="font-weight-bold text-danger"></label>
+	</div>
+
+	<button type="submit" class="btn btn-primary">
+		<span class="icon-check"></span>
+		Block Subscriber
+	</button>
+
+</form>

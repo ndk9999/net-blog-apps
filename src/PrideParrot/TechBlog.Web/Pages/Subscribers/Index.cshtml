@@ -1,0 +1,208 @@
+﻿@page "/manage/subscribers"
+@model IndexModel
+
+@{
+	ViewData["PageTitle"] = "Manage Subscribers";
+}
+
+<div class="mb-4">
+	<h2 class="h3">
+		Manage Subscribers
+	</h2>
+</div>
+
+<partial name="_SubscriberFilterPanel" model="Model"/>
+
+<div class="row">
+	<div class="col-md-12">
+		@if (Model.Subscribers == null || Model.Subscribers.Count == 0)
+		{
+			<p class="text-danger font-weight-bold">
+				No subscribers found.
+			</p>
+		}
+		else
+		{
+			<table class="table table-striped table-hover table-bordered" id="subscribers-list">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Email</th>
+						<th>Subscribed</th>
+						<th class="w-25">Unsubscribed</th>
+						<th class="text-center">Voluntary</th>
+						<th class="w-25">Notes</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+				@foreach (var user in Model.Subscribers)
+				{
+					<tr>
+						<td>
+							@user.Id
+						</td>
+
+						<td>
+							@user.Email
+						</td>
+
+						<td>
+							@user.SubscribedDate.ToString("g")
+						</td>
+
+						<td>
+							@(user.UnsubscribedDate?.ToString("g"))
+							@if (!string.IsNullOrWhiteSpace(user.UnsubscribedReason))
+							{
+								<p class="text-danger font-italic m-0">
+									@user.UnsubscribedReason
+								</p>
+							}
+						</td>
+
+						<td class="text-center">
+							@if (user.UnsubscribedDate == null)
+							{
+								<span>-</span>
+							}
+							else if (user.Voluntary)
+							{
+								<span class="text-success">
+									<span class="icon-check"></span>
+								</span>
+							}
+							else
+							{
+								<span class="text-danger">
+									<span class="icon-times"></span>
+								</span>
+							}
+						</td>
+
+						<td>
+							@user.Notes
+						</td>
+
+						<td>
+							<button type="button" 
+							        class="btn btn-sm btn-danger" 
+							        title="Delete this subscriber"
+							        data-action="delete"
+							        data-id="@user.Id"
+							        data-email="@user.Email">
+								<span class="icon-trash"></span>
+							</button>
+							
+							@if (user.UnsubscribedDate == null || user.Voluntary)
+							{
+								<a asp-page="/subscribers/block"
+								   asp-route-id="@user.Id"
+								   class="btn btn-sm btn-dark"
+								   title="Block this subscriber">
+									<span class="icon-ban"></span>
+								</a>
+							}
+						</td>
+					</tr>
+				}
+				</tbody>
+				<tfoot class="table-borderless">
+					<tr>
+						<th colspan="4">
+							Display @Model.Subscribers.FirstItemIndex - @Model.Subscribers.LastItemIndex of @Model.Subscribers.TotalItemCount subscribers
+							(Page @Model.Subscribers.PageNumber of @Model.Subscribers.PageCount)
+						</th>
+						<th colspan="3" class="text-right">
+							<div class="block-27">
+								<ul>
+									<li class="@(Model.Subscribers.HasPreviousPage ? "" : "inactive")">
+										@if (Model.Subscribers.HasPreviousPage)
+										{
+											<a asp-page="/subscribers/index" 
+											   asp-route-pagenumber="@(Model.Subscribers.PageNumber - 1)"
+											   asp-route-pagesize="@Model.Subscribers.PageSize"
+											   asp-route-sortcolumn="@Model.SortColumn"
+											   asp-route-sortorder="@Model.SortOrder"
+											   asp-route-keyword="@Model.Keyword"
+											   asp-route-unsubscribed="@Model.Unsubscribed"
+											   asp-route-involuntary="@Model.Involuntary"
+											   title="Previous page">
+												&lt;
+											</a>
+										}
+										else
+										{
+											<span title="Previous page">
+												&lt;
+											</span>
+										}
+									</li>
+									<li class="@(Model.Subscribers.HasNextPage ? "" : "inactive")">
+										@if (Model.Subscribers.HasNextPage)
+										{
+											<a asp-page="/subscribers/index" 
+											   asp-route-pagenumber="@(Model.Subscribers.PageNumber + 1)"
+											   asp-route-pagesize="@Model.Subscribers.PageSize"
+											   asp-route-sortcolumn="@Model.SortColumn"
+											   asp-route-sortorder="@Model.SortOrder"
+											   asp-route-keyword="@Model.Keyword"
+											   asp-route-unsubscribed="@Model.Unsubscribed"
+											   asp-route-involuntary="@Model.Involuntary"
+											   title="Next page">
+												&gt;
+											</a>
+										}
+										else
+										{
+											<span title="Next page">
+												&gt;
+											</span>
+										}
+									</li>
+								</ul>
+							</div>
+						</th>
+					</tr>
+				</tfoot>
+			</table>
+		}
+	</div>
+</div>
+
+@section scripts
+{
+	<script>
+		$(function () {
+			$('#btnClearFilter').click(function () {
+				$(this).closest('form')
+					.find('#Keyword').val('').end()
+					.find('input:checkbox').prop('checked', false).end()
+					.submit();
+			});
+
+			$('#subscribers-list').on('click', 'button[data-action]', function () {
+				var btn = $(this),
+					actionName = btn.data('action'),
+					subscriberId = btn.data('id'),
+					email = btn.data('email');
+
+				if (actionName === 'delete' && confirm(`Are you sure you want to delete this subscriber '${email}'?`)) {
+					$.ajax({
+						type: 'POST',
+						url: '/manage/subscribers?handler=DeleteSubscriber',
+						data: { "id": subscriberId },
+						contentType: 'application/x-www-form-urlencoded',
+						dataType: 'json',
+						headers: {
+							"RequestVerificationToken": $('input:hidden[name="__RequestVerificationToken"]').val()
+						},
+						success: function (response) {
+							btn.closest('tr').remove();
+						}
+					});
+				}
+			});
+		});
+	</script>
+}

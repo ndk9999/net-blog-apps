@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechBlog.Web", "TechBlog.We
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechBlog.Core", "TechBlog.Core\TechBlog.Core.csproj", "{3120DA38-0F7E-4554-A32C-23A33BC55D45}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechBlog.Data", "TechBlog.Data\TechBlog.Data.csproj", "{F5831B19-045D-4BA8-8FC8-FFBB7DA6026C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechBlog.Data", "TechBlog.Data\TechBlog.Data.csproj", "{F5831B19-045D-4BA8-8FC8-FFBB7DA6026C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechBlog.Services", "TechBlog.Services\TechBlog.Services.csproj", "{8CDFFF2B-84E1-44C1-BE0D-CEE8CFCBC953}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechBlog.Services", "TechBlog.Services\TechBlog.Services.csproj", "{8CDFFF2B-84E1-44C1-BE0D-CEE8CFCBC953}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -4,6 +4,8 @@ public static class RouteExtensions
 {
 	public static IEndpointRouteBuilder UseBlogRoutes(this IEndpointRouteBuilder endpoints)
 	{
+		endpoints.MapRazorPages();
+
 		endpoints.MapControllerRoute(
 			name: "sign-in",
 			pattern: "login",

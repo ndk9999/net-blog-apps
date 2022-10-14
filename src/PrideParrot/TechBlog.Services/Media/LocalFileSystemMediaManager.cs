@@ -127,6 +127,8 @@ public class LocalFileSystemMediaManager : IMediaManager
 	{
 		try
 		{
+			if (string.IsNullOrWhiteSpace(filePath)) Task.FromResult(true);
+
 			var fullPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "wwwroot", filePath));
 			File.Delete(fullPath);
 

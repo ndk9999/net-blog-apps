@@ -1,0 +1,51 @@
+﻿@model IndexModel
+
+<form method="GET" class="bg-light mb-3 p-2">
+	<div class="row">
+		<div class="col-md-3">
+			<label asp-for="Keyword"></label>
+			<input asp-for="Keyword" class="form-control" />
+		</div>
+
+		<div class="col-md-3">
+			<label asp-for="SortColumn"></label>
+			<select asp-for="SortColumn" asp-items="Model.ColumnList" class="form-control">
+			</select>
+		</div>
+
+		<div class="col-md-3">
+			<label asp-for="SortOrder"></label>
+			<select asp-for="SortOrder" asp-items="Model.OrderList" class="form-control">
+			</select>
+		</div>
+
+		<div class="col-md-3">
+			<label>&nbsp;</label>
+			<div>
+				<div class="form-check">
+					<input type="checkbox" asp-for="Unsubscribed" class="form-check-input"/>
+					<label asp-for="Unsubscribed"></label>
+				</div>
+
+				<div class="form-check">
+					<input type="checkbox" asp-for="Involuntary" class="form-check-input"/>
+					<label asp-for="Involuntary"></label>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-12 mt-2 text-right">
+			<button type="submit" class="btn btn-primary">
+				<span class="icon-filter"></span>
+				Filter Subscribers
+			</button>
+
+			<button type="button" class="btn btn-warning" id="btnClearFilter">
+				<span class="icon-eraser"></span>
+				Reset Form
+			</button>
+		</div>
+	</div>
+</form>
