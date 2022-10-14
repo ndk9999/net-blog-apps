@@ -30,4 +30,12 @@
 	  <Folder Include="Validations\CustomValidators\" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="Views\Shared\_Alert.cshtml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <_ContentIncludedByDefault Remove="Views\Shared\_Alert.cshtml" />
+	</ItemGroup>
+
 </Project>

@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using TechBlog.Services.Blogs;
+using TechBlog.Web.Extensions;
 using TechBlog.Web.Models;
 
 namespace TechBlog.Web.Pages.Subscribers
@@ -19,6 +20,9 @@ namespace TechBlog.Web.Pages.Subscribers
 		[BindProperty]
 	    public BlockSubscriberModel BanModel { get; set; }
 
+		[TempData]
+		public string Alert { get; set; }
+
         public BlockModel(
 	        ILogger<IndexModel> logger, 
 	        ISubscriberRepository subscriberRepository)
@@ -33,7 +37,8 @@ namespace TechBlog.Web.Pages.Subscribers
 
 	        if (subscriber == null || (subscriber.UnsubscribedDate != null && !subscriber.Voluntary))
 	        {
-		        return RedirectToPage("/subscribers/index");
+		        Alert = AlertMessage.Error("Subscriber not found or was already blocked").AsJson();
+				return RedirectToPage("/subscribers/index");
 	        }
 
 	        BanModel = new BlockSubscriberModel()
@@ -61,6 +66,8 @@ namespace TechBlog.Web.Pages.Subscribers
 
 			await _subscriberRepository.BlockSubscriberAsync(
 				BanModel.Id, BanModel.BlockedReason, BanModel.Notes, BanModel.Involuntary);
+
+			Alert = AlertMessage.Success($"Subscriber {BanModel.Email} was already blocked").AsJson();
 
 			return RedirectToPage("/subscribers/index");
         }

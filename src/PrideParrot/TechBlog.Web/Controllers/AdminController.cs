@@ -200,6 +200,8 @@ public class AdminController : Controller
 			_newsletterQueue.Enqueue(post);
 		}
 
+		TempData.SetAlertMessage($"The post '{model.Title}' is saved successful");
+
 		return nextAction == "Continue"
 			? RedirectToAction("EditPost", new {model.Id})
 			: RedirectToAction("Posts");

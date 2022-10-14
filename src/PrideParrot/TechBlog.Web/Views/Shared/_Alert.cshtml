@@ -1,0 +1,17 @@
+﻿@{
+	var alertMessage = TempData.GetAlertMessage();
+}
+
+@if (alertMessage != null)
+{
+	<div class="mb-2">
+		<div class="alert alert-@(alertMessage.Type)" role="alert">
+			<h4 class="alert-heading">
+				@alertMessage.Title
+			</h4>
+			<p>
+				@alertMessage.Message
+			</p>
+		</div>
+	</div>
+}

@@ -64,7 +64,7 @@ namespace TechBlog.Web.Pages.Subscribers
 	        ColumnList = new[] {"Id", "Email", "SubscribedDate", "UnsubscribedDate"}
 		        .Select(x => new SelectListItem(x, x))
 		        .ToList();
-
+			
 	        OrderList = new List<SelectListItem>()
 	        {
 				new("Ascending", "ASC"),
