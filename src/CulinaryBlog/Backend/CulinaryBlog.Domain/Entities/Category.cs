@@ -41,7 +41,7 @@ public class Category : BaseEntity<Guid>
 		{
 			Id = Guid.NewGuid(),
 			Name = name.Trim(),
-			Slug = name.Slugify(),          // Tạo slug: thường là lowercase, thay khoảng trắng bằng dấu gạch ngang, loại bỏ ký tự đặc biệt.
+			Slug = name.ToSlug(),          // Tạo slug: thường là lowercase, thay khoảng trắng bằng dấu gạch ngang, loại bỏ ký tự đặc biệt.
 			Description = description?.Trim(),
 			ImageUrl = imageUrl?.Trim(),
 			CreatedAt = DateTimeOffset.UtcNow,
@@ -58,7 +58,7 @@ public class Category : BaseEntity<Guid>
 			throw new ArgumentException("Category name cannot be null or empty.", nameof(name));
 
 		Name = name.Trim();
-		Slug = name.Slugify(); // Cập nhật slug nếu tên thay đổi
+		Slug = name.ToSlug(); // Cập nhật slug nếu tên thay đổi
 		Description = description?.Trim();
 		ImageUrl = imageUrl?.Trim();
 		UpdatedAt = DateTimeOffset.UtcNow;

@@ -1,5 +1,6 @@
 using CulinaryBlog.Application;
 using CulinaryBlog.Infrastructure;
+using CulinaryBlog.WebApi.Endpoints;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 
@@ -45,7 +46,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // Endpoints will be added here
-//app.MapCategoryEndpoints();
+app.MapCategoryEndpoints();
 //app.MapRecipeEndpoints();
 
 app.Run();

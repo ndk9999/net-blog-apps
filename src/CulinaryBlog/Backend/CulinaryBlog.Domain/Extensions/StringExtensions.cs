@@ -1,18 +1,15 @@
-﻿namespace CulinaryBlog.Domain.Extensions;
+﻿using Slugify;
+
+namespace CulinaryBlog.Domain.Extensions;
 
 public static class StringExtensions
 {
+	private static readonly SlugHelper SlugHelper = new();
+
 	// Đơn giản hóa: lowercase + replace space → dash + loại ký tự không an toàn.
 	// Production: Có thể dùng Slugify NuGet package hoặc xử lý Unicode đúng cách.
-	public static string Slugify(this string input)
+	public static string ToSlug(this string input)
 	{
-		if (string.IsNullOrWhiteSpace(input))
-			return string.Empty;
-
-		return input.ToLowerInvariant()
-			.Replace(" ", "-")
-			.Replace("_", "-")
-			.Replace("--", "-")
-			.Replace("đ", "d");
+		return string.IsNullOrWhiteSpace(input) ? string.Empty : SlugHelper.GenerateSlug(input);
 	}
 }

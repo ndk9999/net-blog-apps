@@ -71,7 +71,7 @@ public class Recipe : BaseEntity<Guid>
 		{
 			Id = Guid.NewGuid(),
 			Title = title,
-			Slug = title.Slugify(),
+			Slug = title.ToSlug(),
 			Description = description,
 			ThumbnailUrl = thumbnailUrl,
 			PrepTimeMinutes = prepTimeMinutes,
@@ -101,7 +101,7 @@ public class Recipe : BaseEntity<Guid>
 			throw new ArgumentException("Recipe title cannot be null or empty.", nameof(title));
 
 		Title = title;
-		Slug = title.Slugify();
+		Slug = title.ToSlug();
 		Description = description;
 		ThumbnailUrl = thumbnailUrl;
 		PrepTimeMinutes = prepTimeMinutes;
