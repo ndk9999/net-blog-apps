@@ -1,0 +1,37 @@
+services:
+  # PostgreSQL database service
+  postgres:
+    image: postgres:16-alpine         # Alpine: image nhẹ (~70 MB vs ~400 MB full)
+    container_name: culinary_blog_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: p123456
+      POSTGRES_DB: culinary_blog
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data    # Persist data giữa container restarts
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # pgAdmin service
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: culinary_blog_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@culinaryblog.dev
+      PGADMIN_DEFAULT_PASSWORD: admin@123
+    ports:
+      - "5050:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  pgadmin_data:
