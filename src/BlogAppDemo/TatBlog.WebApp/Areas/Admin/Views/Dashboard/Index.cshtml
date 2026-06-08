@@ -1,0 +1,17 @@
+﻿@{
+	ViewData["PageTitle"] = "Bảng điều khiển";
+}
+
+<h1>
+	Đây là khu vực dành cho người quản trị
+</h1>
+
+<h1>
+	Giờ hiện tại: @ViewBag.CurrentTime
+</h1>
+
+<cache expires-after="TimeSpan.FromSeconds(10)">
+	<h1 class="text-primary">
+		Giờ đã lưu: @ViewBag.CurrentTime
+	</h1>
+</cache>

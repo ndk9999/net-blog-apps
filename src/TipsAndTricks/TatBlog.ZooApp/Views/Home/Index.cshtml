@@ -1,0 +1,38 @@
+﻿@model IEnumerable<TatBlog.Core.DTO.CategoryItem>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+Page Number: @ViewBag.PageNumber
+
+<form asp-action="SignIn" method="post">
+	@if (TempData["error"] != null)
+	{
+		<p>
+			@TempData["error"]
+		</p>
+
+		@DateTime.Now
+	}
+
+	Username: <input type="text" name="name" />
+	<br />
+	Password: <input type="password" name="password" />
+	<br />
+	<input type="checkbox" name="Login.RememberMe" value="true" /> Remember Me
+	<br />
+	<button type="submit">Submit</button>
+</form>
+
+@foreach (var item in Model)
+{
+	<p>
+		@item.Name (@item.PostCount)
+	</p>
+}

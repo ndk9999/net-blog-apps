@@ -11,16 +11,20 @@ namespace TechBlog.Web.Controllers;
 public class BlogController : Controller
 {
 	private readonly IBlogRepository _blogRepository;
+	private readonly ILogger<BlogController> _logger;
 
-	public BlogController(IBlogRepository blogRepository)
+	public BlogController(IBlogRepository blogRepository, ILogger<BlogController> logger)
 	{
 		_blogRepository = blogRepository;
+		_logger = logger;
 	}
 
 	// GET /?p=10
 	// GET /posts?p=10
 	public async Task<IActionResult> Posts(int p = 1)
 	{
+		_logger.LogInformation("You are viewing a list of blog posts");
+
 		var postQuery = new PostQuery();
 		var model = await PostListViewModel.CreateAsync(Default.PostQueryPurpose.LatestPosts, _blogRepository, postQuery, p);
 		

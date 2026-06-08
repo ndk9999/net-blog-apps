@@ -2,22 +2,15 @@
 
 public interface IPagingParams
 {
+	// Số mẫu tin trên một trang
 	int PageSize { get; set; }
 
-	/// <summary>
-	/// One-based page index
-	/// </summary>
+	// Số trang tính bắt đầu từ 1
 	int PageNumber { get; set; }
 
+	// Tên cột muốn sắp xếp
 	string SortColumn { get; set; }
 
+	// Thứ tự sắp xếp: tăng hay giảm
 	string SortOrder { get; set; }
-
-	public string GetOrderExpression(string defaultColumn = "Id")
-	{
-		var column = string.IsNullOrWhiteSpace(SortColumn) ? defaultColumn : SortColumn;
-		var order = "ASC".Equals(SortOrder, StringComparison.OrdinalIgnoreCase) ? SortOrder : "DESC";
-
-		return $"{column} {order}";
-	}
 }

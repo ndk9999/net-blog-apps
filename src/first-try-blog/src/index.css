@@ -1,0 +1,61 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=Poppins&display=swap");
+
+body {
+  font-family: "Montserrat", sans-serif;
+  font-family: "Poppins", sans-serif;
+}
+
+.tags-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+form.login {
+  max-width: 30rem;
+  margin: 2rem auto;
+  padding: 1rem;
+  border-radius: 6px;
+  text-align: center;
+  background-color: #eee8f8;
+}
+
+form.login input {
+  display: block;
+  width: 100%;
+  font: inherit;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+  border-radius: 4px;
+  background-color: #f9f6fc;
+  border: 1px solid #ccc;
+}
+
+form.login label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+form.login button {
+  cursor: pointer;
+  font: inherit;
+  padding: 0.5rem 1.5rem;
+  background-color: #310485;
+  color: white;
+  border: 1px solid #310485;
+  border-radius: 4px;
+}
+
+form.login button:hover {
+  background-color: #250364;
+}
+
+label.invalid {
+  font-weight: bold;
+  color: #ce0653;
+}
+
+input.invalid {
+  background-color: #fcbed6;
+  border-color: #ce0653;
+}

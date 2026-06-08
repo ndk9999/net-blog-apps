@@ -1,4 +1,5 @@
 ﻿using System.Linq.Dynamic.Core;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using TechBlog.Core.Collections;
 using TechBlog.Core.Contracts;
@@ -38,5 +39,20 @@ public static class PagedListExtensions
 			.ToListAsync(cancellationToken);
 
 		return new PagedList<T>(items, pageNumber, pageSize, totalCount);
+	}
+
+	public static string GetOrderExpression(
+		this IPagingParams pagingParams, 
+		string defaultColumn = "Id")
+	{
+		var column = string.IsNullOrWhiteSpace(pagingParams.SortColumn) 
+			? defaultColumn 
+			: pagingParams.SortColumn;
+
+		var order = "ASC".Equals(pagingParams.SortOrder, StringComparison.OrdinalIgnoreCase) 
+			? pagingParams.SortOrder 
+			: "DESC";
+
+		return $"{column} {order}";
 	}
 }

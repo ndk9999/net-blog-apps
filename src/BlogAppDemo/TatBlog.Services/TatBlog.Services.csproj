@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Blogs\" />
+    <Folder Include="Media\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Timing\" />
+    <Folder Include="Rss\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.25" />
+    <PackageReference Include="SlugGenerator" Version="2.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TatBlog.Core\TatBlog.Core.csproj" />
+    <ProjectReference Include="..\TatBlog.Data\TatBlog.Data.csproj" />
+  </ItemGroup>
+
+</Project>

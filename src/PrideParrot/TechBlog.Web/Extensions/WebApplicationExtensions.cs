@@ -4,9 +4,11 @@ using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using NLog.Web;
 using TechBlog.Core.Entities;
 using TechBlog.Core.Settings;
 using TechBlog.Data.Contexts;
@@ -29,6 +31,19 @@ public static class WebApplicationExtensions
 		builder.Services.AddRazorPages();
 		builder.Services.AddResponseCompression();
 		builder.Services.AddMemoryCache();
+
+		return builder;
+	}
+
+	public static WebApplicationBuilder ConfigureNLog(this WebApplicationBuilder builder)
+	{
+		builder.Logging.ClearProviders();
+		builder.Host.UseNLog();
+		//builder.Services.AddHttpLogging(options =>
+		//{
+		//	options.LoggingFields = HttpLoggingFields.RequestMethod | HttpLoggingFields.RequestPath |
+		//	                        HttpLoggingFields.RequestQuery;
+		//});
 
 		return builder;
 	}
@@ -178,12 +193,13 @@ public static class WebApplicationExtensions
 		app.UseResponseCompression();
 		app.UseHttpsRedirection();
 		app.UseStaticFiles();
+		//app.UseHttpLogging();
 
 		app.UseRouting();
 
 		app.UseAuthentication();
 		app.UseAuthorization();
-
+		
 		return app;
 	}
 

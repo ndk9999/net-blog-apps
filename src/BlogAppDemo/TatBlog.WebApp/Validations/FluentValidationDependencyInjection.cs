@@ -1,0 +1,22 @@
+﻿using FluentValidation.AspNetCore;
+using FluentValidation;
+using System.Reflection;
+
+namespace TatBlog.WebApp.Validations;
+
+public static class FluentValidationDependencyInjection
+{
+	public static WebApplicationBuilder ConfigureFluentValidation(this WebApplicationBuilder builder)
+	{
+		// Manual register validators
+		//builder.Services.AddScoped<IValidator<CategoryEditModel>, CategoryValidator>();
+
+		// Enable client-side integration
+		builder.Services.AddFluentValidationClientsideAdapters();
+
+		// Scan and register all validators in given assembly
+		builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+		return builder;
+	}
+}
